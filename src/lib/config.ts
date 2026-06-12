@@ -141,3 +141,19 @@ export const getConfig = cache(async (): Promise<SiteConfig> => {
     ctaTexto: merge(row?.ctaTexto, CONFIG_PADRAO.ctaTexto),
   };
 });
+
+/**
+ * Imagens de banner do hero cadastradas pelo corretor (sem fallback).
+ * Vazio = nenhum banner configurado → o hero usa as fotos dos imóveis.
+ */
+export async function getHeroBanners(): Promise<string[]> {
+  try {
+    const row = await prisma.config.findUnique({
+      where: { id: CONFIG_SINGLETON_ID },
+      select: { heroImagens: true },
+    });
+    return parseUrls(row?.heroImagens, []);
+  } catch {
+    return [];
+  }
+}

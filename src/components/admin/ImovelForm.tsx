@@ -34,6 +34,21 @@ function paraNumero(v: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+/* O endereço é guardado como uma única string ("rua, número"). No formulário
+   separamos em rua + número e juntamos de volta ao salvar — sem mexer no banco. */
+function separarEndereco(endereco: string): { rua: string; numero: string } {
+  const e = endereco.trim();
+  const m = e.match(/^(.*?)[,\s]+(\d+[A-Za-z]?)$/);
+  if (m) return { rua: m[1].replace(/,\s*$/, "").trim(), numero: m[2] };
+  return { rua: e, numero: "" };
+}
+function juntarEndereco(rua: string, numero: string): string {
+  const r = rua.trim();
+  const n = numero.trim();
+  if (r && n) return `${r}, ${n}`;
+  return r || n;
+}
+
 /* Cabeçalho de seção do formulário (eyebrow + título + filete). */
 function SecaoTitulo({
   numero,
@@ -118,9 +133,12 @@ export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
 
   const [cidade, setCidade] = useState(imovel?.cidade ?? "");
   const [bairro, setBairro] = useState(imovel?.bairro ?? "");
-  const [endereco, setEndereco] = useState(imovel?.endereco ?? "");
-  const [lat, setLat] = useState<number | null>(imovel?.lat ?? null);
-  const [lng, setLng] = useState<number | null>(imovel?.lng ?? null);
+  const [endereco, setEndereco] = useState(
+    () => separarEndereco(imovel?.endereco ?? "").rua,
+  );
+  const [numero, setNumero] = useState(
+    () => separarEndereco(imovel?.endereco ?? "").numero,
+  );
 
   const [suites, setSuites] = useState<number>(imovel?.suites ?? 0);
   const [banheiros, setBanheiros] = useState<number | null>(
@@ -162,9 +180,9 @@ export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
       condominio,
       cidade: cidade.trim(),
       bairro: bairro.trim(),
-      endereco: endereco.trim(),
-      lat,
-      lng,
+      endereco: juntarEndereco(endereco, numero),
+      lat: null,
+      lng: null,
       suites,
       banheiros,
       areaPrivativa,
@@ -359,44 +377,22 @@ export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
               </Field>
             </div>
 
-            <Field label="Endereço" htmlFor="endereco">
-              <Input
-                id="endereco"
-                value={endereco}
-                onChange={(e) => setEndereco(e.target.value)}
-                placeholder="Av. Beira Mar, 1200"
-              />
-            </Field>
-
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <Field
-                label="Latitude"
-                htmlFor="lat"
-                hint="Para o mapa (opcional)"
-              >
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-[1fr_180px]">
+              <Field label="Endereço" htmlFor="endereco">
                 <Input
-                  id="lat"
-                  type="number"
-                  step="any"
-                  inputMode="decimal"
-                  value={lat ?? ""}
-                  onChange={(e) => setLat(paraNumero(e.target.value))}
-                  placeholder="-29.7456"
+                  id="endereco"
+                  value={endereco}
+                  onChange={(e) => setEndereco(e.target.value)}
+                  placeholder="Av. Beira Mar"
                 />
               </Field>
-              <Field
-                label="Longitude"
-                htmlFor="lng"
-                hint="Para o mapa (opcional)"
-              >
+              <Field label="Número" htmlFor="numero" hint="Opcional">
                 <Input
-                  id="lng"
-                  type="number"
-                  step="any"
-                  inputMode="decimal"
-                  value={lng ?? ""}
-                  onChange={(e) => setLng(paraNumero(e.target.value))}
-                  placeholder="-50.0123"
+                  id="numero"
+                  inputMode="numeric"
+                  value={numero}
+                  onChange={(e) => setNumero(e.target.value)}
+                  placeholder="1200"
                 />
               </Field>
             </div>

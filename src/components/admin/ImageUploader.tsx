@@ -16,6 +16,48 @@ import { cn } from "@/lib/cn";
 
 type Foto = { url: string; ordem: number; capa: boolean };
 
+/**
+ * Reduz/otimiza a imagem no navegador antes de enviar: redimensiona para no
+ * máximo 2560px no maior lado e reexporta em JPEG. Isso mantém cada arquivo bem
+ * abaixo do limite de corpo das funções serverless (Vercel) e deixa o site mais
+ * leve. Em qualquer erro, devolve o arquivo original (à prova de falhas).
+ */
+async function comprimirImagem(file: File): Promise<File> {
+  if (!/^image\/(jpeg|png|webp|avif)$/.test(file.type)) return file;
+  try {
+    const bitmap = await createImageBitmap(file, {
+      imageOrientation: "from-image",
+    });
+    const MAX = 2560;
+    const escala = Math.min(1, MAX / Math.max(bitmap.width, bitmap.height));
+    // Já é pequena e leve? Não mexe.
+    if (escala === 1 && file.size <= 1_500_000) {
+      bitmap.close();
+      return file;
+    }
+    const largura = Math.round(bitmap.width * escala);
+    const altura = Math.round(bitmap.height * escala);
+    const canvas = document.createElement("canvas");
+    canvas.width = largura;
+    canvas.height = altura;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      bitmap.close();
+      return file;
+    }
+    ctx.drawImage(bitmap, 0, 0, largura, altura);
+    bitmap.close();
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", 0.85),
+    );
+    if (!blob || blob.size >= file.size) return file; // não melhorou → original
+    const nome = file.name.replace(/\.\w+$/, "") + ".jpg";
+    return new File([blob], nome, { type: "image/jpeg" });
+  } catch {
+    return file;
+  }
+}
+
 export function ImageUploader({
   value,
   onChange,
@@ -25,6 +67,10 @@ export function ImageUploader({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [enviando, setEnviando] = useState(false);
+  const [progresso, setProgresso] = useState<{
+    feitas: number;
+    total: number;
+  } | null>(null);
   const [soltando, setSoltando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   // índice da miniatura sendo arrastada para reordenar
@@ -36,33 +82,64 @@ export function ImageUploader({
     return urls.map((url, i) => ({ url, ordem: i, capa: i === 0 }));
   }
 
+  /** Envia UM arquivo (já otimizado) e devolve a URL pública, ou null. */
+  async function enviarUm(file: File): Promise<string | null> {
+    try {
+      const otimizada = await comprimirImagem(file);
+      const form = new FormData();
+      form.append("file", otimizada);
+      const res = await fetch("/api/upload", { method: "POST", body: form });
+      const data = (await res.json().catch(() => ({}))) as { urls?: string[] };
+      return res.ok && data.urls?.[0] ? data.urls[0] : null;
+    } catch {
+      return null;
+    }
+  }
+
   async function enviarArquivos(files: FileList | File[]) {
     const lista = Array.from(files).filter((f) => f.type.startsWith("image/"));
     if (lista.length === 0) return;
 
     setErro(null);
     setEnviando(true);
+    setProgresso({ feitas: 0, total: lista.length });
+
+    // Uma requisição POR imagem (em pequenos lotes paralelos): assim qualquer
+    // quantidade de fotos sobe de uma vez, sem estourar o limite de tamanho do
+    // corpo das funções serverless da Vercel.
+    const base = value.map((f) => f.url);
+    const resultados: (string | null)[] = new Array(lista.length).fill(null);
+    let feitas = 0;
+    let falhas = 0;
+    const LOTE = 4;
+
     try {
-      const form = new FormData();
-      for (const f of lista) form.append("file", f);
-
-      const res = await fetch("/api/upload", { method: "POST", body: form });
-      const data = (await res.json().catch(() => ({}))) as {
-        urls?: string[];
-        erro?: string;
-      };
-
-      if (!res.ok || !data.urls) {
-        setErro(data.erro || "Não foi possível enviar as imagens.");
-        return;
+      for (let inicio = 0; inicio < lista.length; inicio += LOTE) {
+        const bloco = lista.slice(inicio, inicio + LOTE);
+        await Promise.all(
+          bloco.map(async (file, j) => {
+            const url = await enviarUm(file);
+            if (url) resultados[inicio + j] = url;
+            else falhas += 1;
+            feitas += 1;
+            setProgresso({ feitas, total: lista.length });
+          }),
+        );
+        // Mostra as miniaturas já enviadas (progressivo), preservando a ordem.
+        const enviadas = resultados.filter((u): u is string => Boolean(u));
+        if (enviadas.length) onChange(normalizar([...base, ...enviadas]));
       }
 
-      const atuais = value.map((f) => f.url);
-      onChange(normalizar([...atuais, ...data.urls]));
-    } catch {
-      setErro("Falha de conexão ao enviar as imagens.");
+      if (falhas > 0) {
+        setErro(
+          falhas === lista.length
+            ? "Não foi possível enviar as imagens. Tente novamente."
+            : `${falhas} de ${lista.length} imagens não foram enviadas — tente reenviá-las.`,
+        );
+      }
     } finally {
       setEnviando(false);
+      setProgresso(null);
     }
   }
 
@@ -134,7 +211,8 @@ export function ImageUploader({
           Arraste as fotos para cá
         </p>
         <p className="mt-1 text-sm text-stone-d">
-          JPG, PNG, WEBP ou AVIF · até 8 MB por imagem
+          Selecione várias de uma vez · JPG, PNG, WEBP ou AVIF · otimizamos
+          automaticamente
         </p>
 
         <input
@@ -152,7 +230,11 @@ export function ImageUploader({
           className="label mt-6 inline-flex items-center gap-2 rounded-sm border border-ink/25 px-5 py-3 text-[0.72rem] font-medium tracking-label text-ink transition-colors hover:border-ink hover:bg-ink hover:text-bone disabled:cursor-not-allowed disabled:opacity-50"
         >
           <IconUpload className="h-4 w-4" />
-          {enviando ? "Enviando…" : "Adicionar fotos"}
+          {enviando
+            ? progresso
+              ? `Enviando ${progresso.feitas}/${progresso.total}…`
+              : "Enviando…"
+            : "Adicionar fotos"}
         </button>
 
         {erro && <p className="mt-4 text-xs text-red-600">{erro}</p>}

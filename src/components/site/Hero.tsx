@@ -1,21 +1,36 @@
 import { Button } from "@/components/ui/Button";
 import { realce } from "@/components/ui/realce";
 import { HeroCarousel } from "@/components/site/HeroCarousel";
-import { getConfig } from "@/lib/config";
+import { getConfig, getHeroBanners } from "@/lib/config";
+import { getFotosCapaImoveis } from "@/lib/queries";
 
 /**
  * Hero da home — fotografia full-bleed como protagonista.
  * Banner rotativo (HeroCarousel) + texto vindos das configurações do site.
+ *
+ * Imagens do banner, em ordem de preferência:
+ *  1) banners cadastrados pelo corretor (Configurações);
+ *  2) sem banner → uma foto de cada imóvel cadastrado (rotação);
+ *  3) sem imóveis → imagem padrão da marca.
  */
 export async function Hero() {
-  const c = await getConfig();
+  const [c, banners] = await Promise.all([getConfig(), getHeroBanners()]);
+  const fotosImoveis =
+    banners.length === 0 ? await getFotosCapaImoveis(8) : [];
+  const imagens =
+    banners.length > 0
+      ? banners
+      : fotosImoveis.length > 0
+        ? fotosImoveis
+        : c.heroImagens;
+
   return (
     <section
       className="dark-section relative flex min-h-screen items-center overflow-hidden bg-ink"
       aria-label="Apresentação"
     >
       {/* Banner rotativo de fundo (imagens editáveis no painel) */}
-      <HeroCarousel imagens={c.heroImagens} />
+      <HeroCarousel imagens={imagens} />
 
       {/* Scrim para legibilidade — mais denso à esquerda, onde fica o texto */}
       <span

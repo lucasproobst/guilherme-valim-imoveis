@@ -119,6 +119,29 @@ export async function getImoveisDestaque(limit = 3): Promise<ImovelCardDTO[]> {
   return itens.map(toCardDTO);
 }
 
+/**
+ * Uma foto (a capa) de cada imóvel publicado — usada como banner rotativo do
+ * hero quando o corretor ainda não cadastrou imagens de banner próprias.
+ * Prioriza destaques e os mais recentes; uma imagem por imóvel.
+ */
+export async function getFotosCapaImoveis(limit = 8): Promise<string[]> {
+  const itens = await prisma.imovel.findMany({
+    where: { publicado: true },
+    orderBy: [{ destaque: "desc" }, { criadoEm: "desc" }],
+    take: limit,
+    select: {
+      fotos: {
+        orderBy: [{ capa: "desc" }, { ordem: "asc" }],
+        take: 1,
+        select: { url: true },
+      },
+    },
+  });
+  return itens
+    .map((i) => i.fotos[0]?.url)
+    .filter((u): u is string => Boolean(u));
+}
+
 function orderByDe(ordenar?: OrdenacaoImovel): Prisma.ImovelOrderByWithRelationInput {
   switch (ordenar) {
     case "preco_asc":
