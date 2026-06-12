@@ -30,6 +30,14 @@ export const IconBed = (p: IconProps) => (
   </Svg>
 );
 
+export const IconKey = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="7.5" cy="15.5" r="5.5" />
+    <path d="m21 2-9.6 9.6" />
+    <path d="m15.5 7.5 3 3L22 7l-3-3" />
+  </Svg>
+);
+
 export const IconBath = (p: IconProps) => (
   <Svg {...p}>
     <path d="M4 12V6a2 2 0 0 1 2-2 2 2 0 0 1 2 2m-4 6h17a1 1 0 0 1 1 1v1a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-1a1 1 0 0 1 1-1Zm2 8-1 2m13-2 1 2M7 6h2" />

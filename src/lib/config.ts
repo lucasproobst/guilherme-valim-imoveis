@@ -85,6 +85,8 @@ export const getConfig = cache(async (): Promise<SiteConfig> => {
   try {
     [row, admin] = await Promise.all([
       prisma.config.findUnique({ where: { id: CONFIG_SINGLETON_ID } }),
+      // Identidade do site = admin PRINCIPAL (o primeiro/seed). Novos usuários
+      // criados em /painel/painel-dev são apenas acessos e não mudam o site.
       prisma.admin.findFirst({
         select: {
           nome: true,

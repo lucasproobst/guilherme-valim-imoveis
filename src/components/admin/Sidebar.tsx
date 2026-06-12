@@ -15,6 +15,7 @@ import {
   IconCalendar,
   IconUser,
   IconSettings,
+  IconKey,
   IconLogout,
   IconMenu,
   IconX,
@@ -52,6 +53,12 @@ const GRUPOS: Grupo[] = [
     itens: [
       { href: "/painel/perfil", label: "Meu perfil", icon: IconUser },
       { href: "/painel/configuracoes", label: "Configurações", icon: IconSettings },
+    ],
+  },
+  {
+    rotulo: "Sistema",
+    itens: [
+      { href: "/painel/painel-dev", label: "Usuários & acessos", icon: IconKey },
     ],
   },
 ];
