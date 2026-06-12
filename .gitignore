@@ -1,0 +1,34 @@
+# dependências
+/node_modules
+/.pnp
+.pnp.js
+
+# build / cache
+/.next/
+/out/
+/build
+next-env.d.ts
+
+# banco de dados (SQLite) e uploads de desenvolvimento
+/prisma/dev.db
+/prisma/dev.db-journal
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# ambiente
+.env
+.env*.local
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# sistema operacional
+.DS_Store
+*.pem
+
+# editores
+.vscode/*
+!.vscode/extensions.json
+.idea

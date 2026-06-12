@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500" role="img" aria-label="Imóvel">
+    <defs>
+      <linearGradient id="gnoitevista-ceu" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#15171A"/>
+        <stop offset="100%" stop-color="#3a3026"/>
+      </linearGradient>
+      <radialGradient id="gnoitevista-sol" cx="76%" cy="30%" r="46%">
+        <stop offset="0%" stop-color="#D8B871" stop-opacity="0.85"/>
+        <stop offset="40%" stop-color="#D8B871" stop-opacity="0.25"/>
+        <stop offset="100%" stop-color="#D8B871" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="gnoitevista-base" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#23282e"/>
+        <stop offset="100%" stop-color="#0b0d0f"/>
+      </linearGradient>
+      <filter id="gnoitevista-nuvem" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.006 0.014" numOctaves="4" seed="7" result="n"/>
+        <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.32 -0.08"/>
+      </filter>
+      <filter id="gnoitevista-grao">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" stitchTiles="stitch"/>
+        <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.5 0"/>
+      </filter>
+      <linearGradient id="gnoitevista-scrim" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="55%" stop-color="#0c0e10" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#0c0e10" stop-opacity="0.72"/>
+      </linearGradient>
+    </defs>
+      <rect width="1200" height="1500" fill="url(#gnoitevista-ceu)"/>
+      <rect width="1200" height="990" fill="url(#gnoitevista-sol)"/>
+      <g filter="url(#gnoitevista-nuvem)" opacity="0.3"><rect width="1200" height="911"/></g>
+      <circle cx="864" cy="475" r="210" fill="#D8B871" opacity="0.16"/>
+      <circle cx="864" cy="475" r="83" fill="#D8B871" opacity="0.6"/>
+      <circle cx="864" cy="475" r="45" fill="#FBF3DC" opacity="0.9"/>
+      <!-- costa baixa de residências distantes -->
+      <g fill="#101216">
+        <rect x="36" y="878" width="216" height="113"/>
+        <rect x="276" y="915" width="144" height="75"/>
+        <rect x="444" y="840" width="108" height="150"/>
+      </g>
+      <rect x="44.1" y="893.3" width="11.3" height="25.9" fill="#D8B871" opacity="0.14" rx="1"/><rect x="71.1" y="893.3" width="11.3" height="25.9" fill="#D8B871" opacity="0.5" rx="1"/><rect x="98.1" y="893.3" width="11.3" height="25.9" fill="#D8B871" opacity="0.5" rx="1"/><rect x="125.1" y="893.3" width="11.3" height="25.9" fill="#D8B871" opacity="0.5" rx="1"/><rect x="152.1" y="893.3" width="11.3" height="25.9" fill="#D8B871" opacity="0.5" rx="1"/><rect x="179.1" y="893.3" width="11.3" height="25.9" fill="#D8B871" opacity="0.14" rx="1"/><rect x="206.1" y="893.3" width="11.3" height="25.9" fill="#D8B871" opacity="0.5" rx="1"/><rect x="233.1" y="893.3" width="11.3" height="25.9" fill="#D8B871" opacity="0.5" rx="1"/><rect x="44.1" y="949.5" width="11.3" height="25.9" fill="#D8B871" opacity="0.5" rx="1"/><rect x="71.1" y="949.5" width="11.3" height="25.9" fill="#D8B871" opacity="0.14" rx="1"/><rect x="98.1" y="949.5" width="11.3" height="25.9" fill="#D8B871" opacity="0.5" rx="1"/><rect x="125.1" y="949.5" width="11.3" height="25.9" fill="#D8B871" opacity="0.5" rx="1"/><rect x="152.1" y="949.5" width="11.3" height="25.9" fill="#D8B871" opacity="0.5" rx="1"/><rect x="179.1" y="949.5" width="11.3" height="25.9" fill="#D8B871" opacity="0.5" rx="1"/><rect x="206.1" y="949.5" width="11.3" height="25.9" fill="#D8B871" opacity="0.14" rx="1"/><rect x="233.1" y="949.5" width="11.3" height="25.9" fill="#D8B871" opacity="0.5" rx="1"/>
+      <rect x="454.8" y="854.0" width="15.1" height="23.0" fill="#D8B871" opacity="0.14" rx="1"/><rect x="490.8" y="854.0" width="15.1" height="23.0" fill="#D8B871" opacity="0.5" rx="1"/><rect x="526.8" y="854.0" width="15.1" height="23.0" fill="#D8B871" opacity="0.5" rx="1"/><rect x="454.8" y="904.0" width="15.1" height="23.0" fill="#D8B871" opacity="0.5" rx="1"/><rect x="490.8" y="904.0" width="15.1" height="23.0" fill="#D8B871" opacity="0.14" rx="1"/><rect x="526.8" y="904.0" width="15.1" height="23.0" fill="#D8B871" opacity="0.5" rx="1"/><rect x="454.8" y="954.0" width="15.1" height="23.0" fill="#D8B871" opacity="0.5" rx="1"/><rect x="490.8" y="954.0" width="15.1" height="23.0" fill="#D8B871" opacity="0.5" rx="1"/><rect x="526.8" y="954.0" width="15.1" height="23.0" fill="#D8B871" opacity="0.14" rx="1"/>
+      <!-- mar -->
+      <rect x="0" y="990" width="1200" height="510" fill="url(#gnoitevista-base)"/>
+      <line x1="0" y1="990" x2="1200" y2="990" stroke="#B8924A" stroke-width="2" opacity="0.5"/>
+      <polygon points="864,990 768,1500 960,1500" fill="#D8B871" opacity="0.12"/>
+      <g opacity="0.14" stroke="#D8B871" stroke-width="2">
+        <line x1="336" y1="1050" x2="1152" y2="1050"/>
+        <line x1="552" y1="1140" x2="1104" y2="1140"/>
+        <line x1="672" y1="1250" x2="1200" y2="1250"/>
+      </g>
+    <rect width="1200" height="1500" fill="url(#gnoitevista-scrim)"/>
+    <g filter="url(#gnoitevista-grao)" opacity="0.06"><rect width="1200" height="1500"/></g>
+    <rect x="14" y="14" width="1172" height="1472" fill="none" stroke="#B8924A" stroke-width="1.5" opacity="0.35"/>
+    
+    </svg>

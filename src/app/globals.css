@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===========================================================================
+   GUILHERME VALIM — Sistema de design "coleção privada de imóveis"
+   Tokens de cor/fonte ficam em tailwind.config.ts. Aqui vão estilos base,
+   classes de assinatura (eyebrow, rule, lote) e ajustes de acessibilidade.
+   =========================================================================== */
+
+@layer base {
+  :root {
+    --shell-px: 1.5rem;
+  }
+
+  * {
+    @apply border-line;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bone font-sans text-ink antialiased;
+    font-feature-settings: "ss01", "cv01";
+    /* impede scroll horizontal acidental (transforms/animações) sem quebrar
+       o position: sticky (diferente de overflow: hidden) */
+    overflow-x: clip;
+  }
+
+  ::selection {
+    @apply bg-brass/30 text-ink;
+  }
+
+  /* Foco visível e consistente no teclado (acessibilidade) */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brass ring-offset-2 ring-offset-bone;
+  }
+
+  .dark-section :focus-visible {
+    @apply ring-brass-2 ring-offset-ink;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display font-normal tracking-tight text-ink;
+    text-wrap: balance;
+  }
+
+  /* Respeita usuários que pedem menos movimento */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Container padrão do site */
+  .shell {
+    @apply mx-auto w-full max-w-shell px-[var(--shell-px)];
+  }
+
+  /* EYEBROW — rótulo dourado em Jost, maiúsculas, bem espaçado */
+  .eyebrow {
+    @apply font-label text-[0.7rem] font-medium uppercase tracking-eyebrow text-brass;
+  }
+
+  .eyebrow-light {
+    @apply font-label text-[0.7rem] font-medium uppercase tracking-eyebrow text-brass-2;
+  }
+
+  /* RULE — filete dourado (1px) sob títulos / separando blocos */
+  .rule {
+    @apply h-px w-full bg-line;
+  }
+
+  .rule-brass {
+    @apply h-px w-14 bg-brass;
+  }
+
+  /* Rótulos genéricos em Jost (botões, specs, menu) */
+  .label {
+    @apply font-label uppercase tracking-label;
+  }
+
+  /* LOTE NN — itálico Playfair sobre tarja escura semitransparente */
+  .lote-tag {
+    @apply pointer-events-none absolute left-4 top-4 z-10 inline-flex items-center
+           bg-ink/55 px-3 py-1 font-display text-sm italic text-bone backdrop-blur-sm;
+  }
+
+  /* Destaque em itálico dourado dentro de títulos display */
+  .accent-italic {
+    @apply font-display italic text-brass;
+  }
+
+  /* Cartão claro padrão */
+  .panel {
+    @apply rounded-sm border border-line bg-white;
+  }
+
+  /* Link sublinhado fino estilo editorial */
+  .link-underline {
+    @apply relative inline-block after:absolute after:bottom-0 after:left-0 after:h-px
+           after:w-full after:origin-right after:scale-x-0 after:bg-current
+           after:transition-transform after:duration-300 after:ease-soft
+           hover:after:origin-left hover:after:scale-x-100;
+  }
+}
+
+@layer utilities {
+  /* Gradiente para legibilidade de texto sobre fotos */
+  .photo-scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(21, 23, 26, 0) 0%,
+      rgba(21, 23, 26, 0.12) 45%,
+      rgba(21, 23, 26, 0.78) 100%
+    );
+  }
+
+  .photo-scrim-top {
+    background: linear-gradient(
+      180deg,
+      rgba(21, 23, 26, 0.55) 0%,
+      rgba(21, 23, 26, 0) 40%
+    );
+  }
+
+  .text-shadow-soft {
+    text-shadow: 0 2px 24px rgba(21, 23, 26, 0.4);
+  }
+
+  /* esconde a barra de rolagem mantendo o scroll (galerias / chips) */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ----- Reveal on scroll -----
+     Elementos com .reveal começam levemente abaixo e transparentes; o
+     RevealManager (IntersectionObserver) adiciona .is-visible ao entrarem na
+     viewport. Variações de direção: .reveal-left / .reveal-right / .reveal-zoom.
+     Use style={{transitionDelay}} para escalonar (stagger). */
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition:
+      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+  /* Deslocamento horizontal só a partir de md — no mobile os elementos são
+     full-width e o translate lateral causaria overflow horizontal. */
+  @media (min-width: 768px) {
+    .reveal-left {
+      transform: translateX(-32px);
+    }
+    .reveal-right {
+      transform: translateX(32px);
+    }
+    .reveal-zoom {
+      transform: scale(1.04);
+    }
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Sem animação para quem pede menos movimento ou está sem JS. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

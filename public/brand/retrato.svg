@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1120" viewBox="0 0 900 1120" role="img" aria-label="Imóvel">
+    <defs>
+      <linearGradient id="gnoiteretrato-ceu" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#15171A"/>
+        <stop offset="100%" stop-color="#3a3026"/>
+      </linearGradient>
+      <radialGradient id="gnoiteretrato-sol" cx="76%" cy="30%" r="46%">
+        <stop offset="0%" stop-color="#D8B871" stop-opacity="0.85"/>
+        <stop offset="40%" stop-color="#D8B871" stop-opacity="0.25"/>
+        <stop offset="100%" stop-color="#D8B871" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="gnoiteretrato-base" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#23282e"/>
+        <stop offset="100%" stop-color="#0b0d0f"/>
+      </linearGradient>
+      <filter id="gnoiteretrato-nuvem" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.006 0.014" numOctaves="4" seed="7" result="n"/>
+        <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.32 -0.08"/>
+      </filter>
+      <filter id="gnoiteretrato-grao">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" stitchTiles="stitch"/>
+        <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.5 0"/>
+      </filter>
+      <linearGradient id="gnoiteretrato-scrim" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="55%" stop-color="#0c0e10" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#0c0e10" stop-opacity="0.72"/>
+      </linearGradient>
+    </defs>
+      <rect width="900" height="1120" fill="#15171A"/>
+      <radialGradient id="gnoiteretrato-rl" cx="68%" cy="38%" r="60%">
+        <stop offset="0%" stop-color="#D8B871" stop-opacity="0.5"/>
+        <stop offset="55%" stop-color="#D8B871" stop-opacity="0.08"/>
+        <stop offset="100%" stop-color="#D8B871" stop-opacity="0"/>
+      </radialGradient>
+      <rect width="900" height="1120" fill="url(#gnoiteretrato-rl)"/>
+      <g filter="url(#gnoiteretrato-nuvem)" opacity="0.16"><rect width="900" height="1120"/></g>
+      <!-- figura: ombros + pescoço + cabeça -->
+      <g fill="#0b0d0f">
+        <path d="M 117 1120
+                 C 153 717, 297 605, 450 605
+                 C 603 605, 747 717, 783 1120 Z"/>
+        <ellipse cx="450" cy="398" rx="122" ry="179"/>
+      </g>
+      <!-- rim light dourada no contorno direito -->
+      <path d="M 572 347
+               a 122 179 0 0 1 -18 291"
+            fill="none" stroke="#D8B871" stroke-width="3" opacity="0.55"/>
+      <path d="M 783 1120
+               C 738 739, 639 627, 540 616"
+            fill="none" stroke="#D8B871" stroke-width="3" opacity="0.32"/>
+    <rect width="900" height="1120" fill="url(#gnoiteretrato-scrim)"/>
+    <g filter="url(#gnoiteretrato-grao)" opacity="0.06"><rect width="900" height="1120"/></g>
+    <rect x="14" y="14" width="872" height="1092" fill="none" stroke="#B8924A" stroke-width="1.5" opacity="0.35"/>
+    
+    </svg>

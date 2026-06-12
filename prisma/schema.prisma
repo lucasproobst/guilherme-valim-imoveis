@@ -1,0 +1,107 @@
+// Prisma schema — PostgreSQL (Supabase).
+// DATABASE_URL = pooler (transaction, 6543) usado pelo app.
+// DIRECT_URL   = pooler (session, 5432) usado pelas migrations.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Imovel {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  titulo        String
+  tipo          String // Casa, Apartamento, Cobertura, Terreno...
+  finalidade    String // Venda, Locação
+  preco         Int // em reais (inteiro, sem centavos)
+  condominio    Int? // taxa de condomínio mensal (opcional)
+  cidade        String
+  bairro        String?
+  endereco      String?
+  lat           Float?
+  lng           Float?
+  suites        Int      @default(0)
+  banheiros     Int?
+  areaPrivativa Int? // m² privativos
+  areaTerreno   Int? // m² de terreno
+  vagas         Int      @default(0)
+  descricao     String
+  diferenciais  String   @default("[]") // JSON array de strings
+  videoUrl      String? // tour em vídeo (opcional)
+  fotos         Foto[]
+  leads         Lead[]
+  destaque      Boolean  @default(false)
+  publicado     Boolean  @default(false)
+  criadoEm      DateTime @default(now())
+  atualizadoEm  DateTime @updatedAt
+}
+
+model Foto {
+  id       String  @id @default(cuid())
+  url      String
+  ordem    Int     @default(0)
+  capa     Boolean @default(false)
+  imovel   Imovel  @relation(fields: [imovelId], references: [id], onDelete: Cascade)
+  imovelId String
+}
+
+model Lead {
+  id       String   @id @default(cuid())
+  nome     String
+  whatsapp String
+  mensagem String?
+  imovel   Imovel?  @relation(fields: [imovelId], references: [id], onDelete: SetNull)
+  imovelId String?
+  status   String   @default("novo") // novo, em_contato, atendido, arquivado
+  origem   String   @default("site") // site, imovel, contato
+  lido     Boolean  @default(false)
+  criadoEm DateTime @default(now())
+}
+
+// Configurações do site (linha única "singleton"), editáveis pelo painel.
+// Campos nulos caem para os defaults em src/lib/constants.ts (CORRETOR).
+model Config {
+  id           String   @id @default("singleton")
+  nome         String?
+  marca        String?
+  subtitulo    String?
+  assinatura   String?
+  creci        String?
+  regiao       String?
+  email        String?
+  telefone     String?
+  whatsapp     String?
+  instagram    String?
+  endereco     String?
+  retratoUrl   String?
+  // Conteúdo editável do site
+  heroEyebrow   String?
+  heroTitulo    String?
+  heroSubtitulo String?
+  heroImagens   String? // JSON string[] — banner rotativo da home
+  numeros       String? // JSON [{numero,rotulo}] (faixa de autoridade / números)
+  miniDestaques String? // JSON [{numero,rotulo}] (bloco "sobre" da home)
+  sobreTitulo   String? // título do bloco "sobre" na home
+  sobreResumo   String? // parágrafos do bloco "sobre" na home
+  bio           String? // parágrafos da página /sobre
+  passos        String? // JSON [{titulo,texto}] (como trabalho)
+  ctaTitulo     String?
+  ctaTexto      String?
+  atualizadoEm DateTime @updatedAt
+}
+
+model Admin {
+  id        String  @id @default(cuid())
+  email     String  @unique
+  senhaHash String
+  nome      String
+  creci     String?
+  telefone  String?
+  bio       String?
+  avatarUrl String?
+}
