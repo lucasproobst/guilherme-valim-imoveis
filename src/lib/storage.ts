@@ -1,36 +1,25 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import crypto from "crypto";
 
 /**
- * Camada de Supabase Storage (server-side).
- * Usada pela camada de upload quando há SUPABASE_SERVICE_ROLE_KEY no ambiente.
- * A service_role key é secreta — NUNCA use com prefixo NEXT_PUBLIC.
+ * Camada de Supabase Storage (server-side) via REST API (fetch).
+ * Usamos a REST API direta (em vez do SDK) para funcionar igual no app (Next)
+ * e em scripts Node (seed) — sem o cliente Realtime/WebSocket do supabase-js.
+ *
+ * A service_role key é SECRETA — só servidor, nunca com prefixo NEXT_PUBLIC.
  */
 
 export const SUPABASE_BUCKET = process.env.SUPABASE_BUCKET || "uploads";
 
-/** Há configuração para usar o Storage? (senão, cai para disco local) */
-export function storageHabilitado(): boolean {
-  return Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      process.env.SUPABASE_SERVICE_ROLE_KEY,
-  );
-}
-
-let _client: SupabaseClient | null = null;
-function client(): SupabaseClient {
-  if (_client) return _client;
+function env() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    throw new Error(
-      "Supabase Storage não configurado (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY).",
-    );
-  }
-  _client = createClient(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-  return _client;
+  return { url, key };
+}
+
+/** Há configuração para usar o Storage? (senão, cai para disco local) */
+export function storageHabilitado(): boolean {
+  const { url, key } = env();
+  return Boolean(url && key);
 }
 
 const EXT: Record<string, string> = {
@@ -50,21 +39,50 @@ export async function subirParaStorage(
   contentType: string,
   pasta: string,
 ): Promise<string> {
+  const { url, key } = env();
+  if (!url || !key) {
+    throw new Error(
+      "Supabase Storage não configurado (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY).",
+    );
+  }
   const ext = EXT[contentType] || "bin";
-  const path = `${pasta}/${crypto.randomUUID()}.${ext}`;
-  const sb = client();
-  const { error } = await sb.storage
-    .from(SUPABASE_BUCKET)
-    .upload(path, buffer, { contentType, upsert: false });
-  if (error) throw new Error(`Falha ao enviar para o Storage: ${error.message}`);
-  return sb.storage.from(SUPABASE_BUCKET).getPublicUrl(path).data.publicUrl;
+  const objeto = `${pasta}/${crypto.randomUUID()}.${ext}`;
+
+  const res = await fetch(
+    `${url}/storage/v1/object/${SUPABASE_BUCKET}/${objeto}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": contentType,
+        "cache-control": "31536000",
+        "x-upsert": "false",
+      },
+      body: new Uint8Array(buffer),
+    },
+  );
+
+  if (!res.ok) {
+    const detalhe = await res.text().catch(() => "");
+    throw new Error(
+      `Falha ao enviar para o Storage (${res.status}): ${detalhe.slice(0, 140)}`,
+    );
+  }
+
+  return `${url}/storage/v1/object/public/${SUPABASE_BUCKET}/${objeto}`;
 }
 
 /** Remove um arquivo do Storage a partir da sua URL pública (ignora outras). */
-export async function removerDoStorage(url: string): Promise<void> {
+export async function removerDoStorage(urlPublica: string): Promise<void> {
+  const { url, key } = env();
+  if (!url || !key) return;
   const marcador = `/storage/v1/object/public/${SUPABASE_BUCKET}/`;
-  const i = url.indexOf(marcador);
-  if (i === -1) return; // não é do nosso bucket (ex.: /brand/...)
-  const path = url.slice(i + marcador.length);
-  if (path) await client().storage.from(SUPABASE_BUCKET).remove([path]);
+  const i = urlPublica.indexOf(marcador);
+  if (i === -1) return; // não é do nosso bucket
+  const objeto = urlPublica.slice(i + marcador.length);
+  if (!objeto) return;
+  await fetch(`${url}/storage/v1/object/${SUPABASE_BUCKET}/${objeto}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${key}` },
+  }).catch(() => {});
 }
