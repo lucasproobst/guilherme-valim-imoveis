@@ -32,10 +32,17 @@ export async function Hero() {
       {/* Banner rotativo de fundo (imagens editáveis no painel) */}
       <HeroCarousel imagens={imagens} />
 
-      {/* Scrim para legibilidade — mais denso à esquerda, onde fica o texto */}
+      {/* Scrim para legibilidade.
+          Mobile: gradiente vertical — a foto aparece em cima e o texto fica
+          legível embaixo. Desktop: horizontal — texto à esquerda, foto à direita. */}
       <span
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-r from-ink/85 via-ink/55 to-ink/20"
+        className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/50 to-ink/45 md:bg-gradient-to-r md:from-ink/85 md:via-ink/55 md:to-ink/20"
+      />
+      {/* Reforço no topo (só mobile) para o cabeçalho continuar legível sobre a foto */}
+      <span
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-ink/70 to-transparent md:hidden"
       />
       <span
         aria-hidden

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Jost, Inter } from "next/font/google";
 import { SITE_URL } from "@/lib/constants";
 import { getConfig } from "@/lib/config";
@@ -28,6 +28,15 @@ const inter = Inter({
   variable: "--font-inter",
   display: "swap",
 });
+
+/**
+ * Cor da barra do navegador no mobile (iOS/Android e navegadores in-app como
+ * o do WhatsApp). Usa o tom escuro do hero para não aparecer aquela faixa creme
+ * acima do cabeçalho (antes ela herdava o fundo creme da página).
+ */
+export const viewport: Viewport = {
+  themeColor: "#15171A",
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const c = await getConfig();
