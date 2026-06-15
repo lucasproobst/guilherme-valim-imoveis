@@ -47,6 +47,7 @@ function toImovelDTO(i: ImovelComFotos): ImovelDTO {
     finalidade: i.finalidade,
     preco: i.preco,
     condominio: i.condominio,
+    condominioNome: i.condominioNome,
     cidade: i.cidade,
     bairro: i.bairro,
     endereco: i.endereco,
@@ -84,6 +85,7 @@ function toCardDTO(i: ImovelComFotos): ImovelCardDTO {
     preco: i.preco,
     cidade: i.cidade,
     bairro: i.bairro,
+    condominioNome: i.condominioNome,
     suites: i.suites,
     banheiros: i.banheiros,
     areaPrivativa: i.areaPrivativa,
@@ -169,6 +171,7 @@ export async function buscarImoveis(
   const where: Prisma.ImovelWhereInput = { publicado: true };
 
   if (filtros.cidade) where.cidade = filtros.cidade;
+  if (filtros.condominioNome) where.condominioNome = filtros.condominioNome;
   if (filtros.tipo) where.tipo = filtros.tipo;
   if (filtros.finalidade) where.finalidade = filtros.finalidade;
   if (filtros.dormitorios) where.suites = { gte: filtros.dormitorios };
@@ -235,6 +238,19 @@ export async function getCidadesDisponiveis(): Promise<string[]> {
     orderBy: { cidade: "asc" },
   });
   return linhas.map((l) => l.cidade);
+}
+
+/** Condomínios distintos com imóveis publicados (para o filtro). */
+export async function getCondominiosDisponiveis(): Promise<string[]> {
+  const linhas = await prisma.imovel.findMany({
+    where: { publicado: true, condominioNome: { not: null } },
+    distinct: ["condominioNome"],
+    select: { condominioNome: true },
+    orderBy: { condominioNome: "asc" },
+  });
+  return linhas
+    .map((l) => l.condominioNome)
+    .filter((c): c is string => Boolean(c && c.trim()));
 }
 
 /** Slugs publicados para o sitemap. */

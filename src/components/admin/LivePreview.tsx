@@ -45,6 +45,7 @@ export function LivePreview({
     preco,
     cidade: cidade.trim() || "Cidade",
     bairro: bairro.trim() || null,
+    condominioNome: null,
     suites,
     banheiros,
     areaPrivativa,

@@ -19,6 +19,7 @@ export type ImovelDTO = {
   finalidade: string;
   preco: number;
   condominio: number | null;
+  condominioNome: string | null;
   cidade: string;
   bairro: string | null;
   endereco: string | null;
@@ -50,6 +51,7 @@ export type ImovelCardDTO = Pick<
   | "preco"
   | "cidade"
   | "bairro"
+  | "condominioNome"
   | "suites"
   | "banheiros"
   | "areaPrivativa"
@@ -75,6 +77,7 @@ export type LeadDTO = {
 
 export type FiltrosImovel = {
   cidade?: string;
+  condominioNome?: string;
   tipo?: string;
   finalidade?: string;
   dormitorios?: number;

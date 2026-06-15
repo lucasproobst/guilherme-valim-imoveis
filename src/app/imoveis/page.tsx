@@ -7,7 +7,11 @@ import type { ValoresFiltro } from "@/components/site/FilterBar";
 import { Pagination } from "@/components/site/Pagination";
 import { Button } from "@/components/ui/Button";
 import { IconSearch } from "@/components/ui/icons";
-import { buscarImoveis, getCidadesDisponiveis } from "@/lib/queries";
+import {
+  buscarImoveis,
+  getCidadesDisponiveis,
+  getCondominiosDisponiveis,
+} from "@/lib/queries";
 import {
   TIPOS_IMOVEL,
   FINALIDADES,
@@ -56,6 +60,7 @@ export default async function ImoveisPage({
 }) {
   // ----- Leitura e validação dos parâmetros de busca -----
   const cidade = paraTexto(searchParams.cidade);
+  const condominioNome = paraTexto(searchParams.condominioNome);
   const tipo = paraTexto(searchParams.tipo);
   const finalidade = paraTexto(searchParams.finalidade);
   const dormitorios = paraInteiro(searchParams.dormitorios);
@@ -72,6 +77,7 @@ export default async function ImoveisPage({
 
   const filtros: FiltrosImovel = {
     cidade,
+    condominioNome,
     tipo,
     finalidade,
     dormitorios,
@@ -82,9 +88,10 @@ export default async function ImoveisPage({
   };
 
   // ----- Consultas ao banco -----
-  const [resultado, cidades] = await Promise.all([
+  const [resultado, cidades, condominios] = await Promise.all([
     buscarImoveis(filtros),
     getCidadesDisponiveis(),
+    getCondominiosDisponiveis(),
   ]);
 
   const { itens, total, totalPaginas } = resultado;
@@ -92,6 +99,7 @@ export default async function ImoveisPage({
   // Valores enviados à barra de filtros (somente o que está aplicado na URL)
   const valores: ValoresFiltro = {
     cidade,
+    condominioNome,
     tipo,
     finalidade,
     dormitorios: dormitorios ? String(dormitorios) : undefined,
@@ -141,6 +149,7 @@ export default async function ImoveisPage({
       {/* Barra de filtros */}
       <FilterBar
         cidades={cidades}
+        condominios={condominios}
         tipos={TIPOS_IMOVEL}
         finalidades={FINALIDADES}
         ordenacoes={ORDENACOES}

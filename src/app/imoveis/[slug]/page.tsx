@@ -68,7 +68,9 @@ export default async function ImovelPage({
   const lote = loteFromId(imovel.id);
   const relacionados = await getImoveisRelacionados(imovel, 3);
 
-  const local = [imovel.cidade, imovel.bairro].filter(Boolean).join(" · ");
+  const local = [imovel.cidade, imovel.bairro, imovel.condominioNome]
+    .filter(Boolean)
+    .join(" · ");
   const ehLocacao = imovel.finalidade === "Locação";
 
   return (

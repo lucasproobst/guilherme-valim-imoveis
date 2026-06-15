@@ -11,6 +11,7 @@ export type ImovelInput = {
   finalidade: string;
   preco: number;
   condominio: number | null;
+  condominioNome: string;
   cidade: string;
   bairro: string;
   endereco: string;
@@ -70,6 +71,7 @@ export function parseImovelInput(body: unknown): ImovelInput {
     finalidade: str(d.finalidade) || "Venda",
     preco,
     condominio: numOuNulo(d.condominio),
+    condominioNome: str(d.condominioNome),
     cidade,
     bairro: str(d.bairro),
     endereco: str(d.endereco),

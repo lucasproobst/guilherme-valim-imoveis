@@ -10,6 +10,7 @@ import { cn } from "@/lib/cn";
 /** Valores atuais dos filtros (vindos dos searchParams da página). */
 export type ValoresFiltro = {
   cidade?: string;
+  condominioNome?: string;
   tipo?: string;
   finalidade?: string;
   dormitorios?: string;
@@ -27,12 +28,14 @@ type Opcao = { value: string; label: string };
  */
 export function FilterBar({
   cidades,
+  condominios,
   tipos,
   finalidades,
   ordenacoes,
   valores,
 }: {
   cidades: string[];
+  condominios: string[];
   tipos: readonly string[];
   finalidades: readonly string[];
   ordenacoes: readonly Opcao[];
@@ -61,6 +64,7 @@ export function FilterBar({
 
   const algumFiltro = Boolean(
     valores.cidade ||
+      valores.condominioNome ||
       valores.tipo ||
       valores.finalidade ||
       valores.dormitorios ||
@@ -88,6 +92,26 @@ export function FilterBar({
           ))}
         </Select>
       </div>
+
+      {/* Condomínio */}
+      {condominios.length > 0 && (
+        <div className="flex flex-col">
+          <Rotulo htmlFor="f-condominio">Condomínio</Rotulo>
+          <Select
+            id="f-condominio"
+            value={valores.condominioNome ?? ""}
+            onChange={(e) => aplicar({ condominioNome: e.target.value })}
+            aria-label="Filtrar por condomínio"
+          >
+            <option value="">Todos</option>
+            {condominios.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </Select>
+        </div>
+      )}
 
       {/* Tipo */}
       <div className="flex flex-col">
@@ -234,7 +258,7 @@ export function FilterBar({
           id="painel-filtros"
           className={cn(
             "grid grid-cols-1 gap-4 sm:grid-cols-2",
-            "mt-4 md:mt-0 md:grid-cols-7 md:items-end md:gap-3",
+            "mt-4 md:mt-0 md:grid-cols-4 md:items-end md:gap-3 lg:grid-cols-8",
             aberto ? "grid" : "hidden md:grid",
           )}
         >

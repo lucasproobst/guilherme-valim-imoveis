@@ -20,6 +20,7 @@ model Imovel {
   finalidade    String // Venda, Locação
   preco         Int // em reais (inteiro, sem centavos)
   condominio    Int? // taxa de condomínio mensal (opcional)
+  condominioNome String? // nome do condomínio/empreendimento (opcional)
   cidade        String
   bairro        String?
   endereco      String?

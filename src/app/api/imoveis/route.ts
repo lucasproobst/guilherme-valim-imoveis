@@ -43,6 +43,7 @@ export async function POST(req: Request) {
       finalidade: dados.finalidade,
       preco: dados.preco,
       condominio: dados.condominio,
+      condominioNome: dados.condominioNome || null,
       cidade: dados.cidade,
       bairro: dados.bairro || null,
       endereco: dados.endereco || null,

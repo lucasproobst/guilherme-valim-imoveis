@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/Button";
 import { Rule } from "@/components/ui/Rule";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { IconCheck } from "@/components/ui/icons";
-import { TIPOS_IMOVEL, FINALIDADES } from "@/lib/constants";
+import { TIPOS_IMOVEL, FINALIDADES, CONDOMINIOS } from "@/lib/constants";
 import { cn } from "@/lib/cn";
 import type { ImovelDTO } from "@/lib/types";
 import { ImageUploader } from "@/components/admin/ImageUploader";
@@ -139,6 +139,9 @@ export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
   const [numero, setNumero] = useState(
     () => separarEndereco(imovel?.endereco ?? "").numero,
   );
+  const [condominioNome, setCondominioNome] = useState(
+    imovel?.condominioNome ?? "",
+  );
 
   const [suites, setSuites] = useState<number>(imovel?.suites ?? 0);
   const [banheiros, setBanheiros] = useState<number | null>(
@@ -181,6 +184,7 @@ export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
       cidade: cidade.trim(),
       bairro: bairro.trim(),
       endereco: juntarEndereco(endereco, numero),
+      condominioNome: condominioNome.trim(),
       lat: null,
       lng: null,
       suites,
@@ -396,6 +400,25 @@ export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
                 />
               </Field>
             </div>
+
+            <Field
+              label="Condomínio / empreendimento"
+              htmlFor="condominioNome"
+              hint="Opcional — selecione um da lista ou digite outro nome"
+            >
+              <Input
+                id="condominioNome"
+                list="lista-condominios"
+                value={condominioNome}
+                onChange={(e) => setCondominioNome(e.target.value)}
+                placeholder="Ex.: Velas da Marina"
+              />
+              <datalist id="lista-condominios">
+                {CONDOMINIOS.map((c) => (
+                  <option key={c} value={c} />
+                ))}
+              </datalist>
+            </Field>
           </div>
         </section>
 

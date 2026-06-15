@@ -54,6 +54,24 @@ export const TIPOS_IMOVEL = [
 
 export const FINALIDADES = ["Venda", "Locação"] as const;
 
+/**
+ * Condomínios/empreendimentos de alto padrão (Capão da Canoa / Xangri-lá).
+ * Lista inicial sugerida no cadastro e no filtro — o corretor pode digitar
+ * qualquer outro nome livremente.
+ */
+export const CONDOMINIOS = [
+  "Velas da Marina",
+  "Sense",
+  "Capão Ilhas Resort",
+  "Ilhas Park",
+  "Quintas do Lago",
+  "Ventura",
+  "Enseada",
+  "Marina Park",
+  "Reserva da Marina",
+  "Dunas Residence",
+] as const;
+
 /** Chips de diferenciais selecionáveis no painel. */
 export const DIFERENCIAIS = [
   "Piscina",
