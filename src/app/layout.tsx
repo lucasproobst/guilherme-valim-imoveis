@@ -4,6 +4,7 @@ import { SITE_URL } from "@/lib/constants";
 import { getConfig } from "@/lib/config";
 import { ConfigProvider } from "@/lib/config-context";
 import { RevealManager } from "@/components/ui/RevealManager";
+import { WhatsAppFloat } from "@/components/site/WhatsAppFloat";
 import "./globals.css";
 
 /* Tipografia do sistema de design (mapeada para variáveis CSS) */
@@ -84,7 +85,10 @@ export default async function RootLayout({
         </noscript>
       </head>
       <body>
-        <ConfigProvider config={config}>{children}</ConfigProvider>
+        <ConfigProvider config={config}>
+          {children}
+          <WhatsAppFloat />
+        </ConfigProvider>
         <RevealManager />
       </body>
     </html>
