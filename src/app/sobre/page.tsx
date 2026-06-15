@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { SiteShell } from "@/components/site/SiteShell";
 import { SectionHeading } from "@/components/site/SectionHeading";
+import { VersiculoDoDia } from "@/components/site/VersiculoDoDia";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Rule } from "@/components/ui/Rule";
 import { Button } from "@/components/ui/Button";
@@ -134,28 +135,8 @@ export default async function SobrePage() {
         </ol>
       </section>
 
-      {/* FAIXA DE NÚMEROS — fundo escuro */}
-      <section className="dark-section bg-ink py-16 md:py-20">
-        <div className="shell">
-          <div className="grid grid-cols-2 gap-y-12 gap-x-6 text-center md:grid-cols-4">
-            {c.numeros.map((n, i) => (
-              <div
-                key={i}
-                className="reveal flex flex-col items-center gap-2"
-                style={{ transitionDelay: `${i * 90}ms` }}
-              >
-                <span className="font-display text-4xl text-bone md:text-5xl">
-                  {n.numero}
-                </span>
-                <Rule brass className="mx-auto" />
-                <span className="label text-[0.62rem] tracking-label text-bone/55">
-                  {n.rotulo}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* PALAVRA DO DIA — versículo (troca diariamente) */}
+      <VersiculoDoDia variant="sobre" />
 
       {/* CTA FINAL */}
       <section className="shell py-20 text-center md:py-28">

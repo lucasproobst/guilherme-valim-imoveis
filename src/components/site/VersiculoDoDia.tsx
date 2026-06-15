@@ -1,43 +1,55 @@
 import { versiculoDoDia } from "@/lib/versiculos";
 
 /**
- * "Palavra do dia" — um versículo bíblico sobre prosperidade/finanças que
- * troca diariamente. Sobe sobre a base do hero (margem negativa) com o mesmo
- * cartão ink translúcido + filetes dourados da identidade do site.
+ * "Palavra do dia" — versículo bíblico (prosperidade/finanças) que troca
+ * diariamente. Minimalista, na identidade do site.
+ *  - variant "hero": cartão translúcido que sobe sobre a base do hero (home);
+ *  - variant "sobre": faixa escura simples (página Sobre).
  */
-export function VersiculoDoDia() {
+export function VersiculoDoDia({
+  variant = "hero",
+}: {
+  variant?: "hero" | "sobre";
+}) {
   const { texto, referencia } = versiculoDoDia();
+
+  const conteudo = (
+    <>
+      <span className="eyebrow-light">Palavra do dia</span>
+      <blockquote className="mx-auto mt-3 max-w-2xl">
+        <p className="font-display text-base italic leading-relaxed text-bone text-shadow-soft sm:text-lg">
+          {texto}
+        </p>
+      </blockquote>
+      <div className="mt-4 flex items-center justify-center gap-3">
+        <span aria-hidden className="h-px w-6 bg-brass/40" />
+        <cite className="eyebrow-light not-italic text-brass-2">
+          {referencia}
+        </cite>
+        <span aria-hidden className="h-px w-6 bg-brass/40" />
+      </div>
+    </>
+  );
+
+  if (variant === "sobre") {
+    return (
+      <section
+        className="dark-section bg-ink py-14 md:py-16"
+        aria-label="Palavra do dia"
+      >
+        <div className="reveal shell text-center">{conteudo}</div>
+      </section>
+    );
+  }
 
   return (
     <section
-      className="dark-section relative z-20 -mt-24 sm:-mt-28"
+      className="dark-section relative z-20 -mt-20 sm:-mt-24"
       aria-label="Palavra do dia"
     >
       <div className="reveal shell">
-        <figure className="relative overflow-hidden rounded-sm border border-brass/25 bg-ink/70 px-6 py-12 text-center backdrop-blur-md sm:px-12 sm:py-14">
-          {/* Aspas decorativas ao fundo */}
-          <span
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-3 -translate-x-1/2 select-none font-display text-7xl leading-none text-brass/20 sm:text-8xl"
-          >
-            &ldquo;
-          </span>
-
-          <span className="eyebrow-light relative">Palavra do dia</span>
-
-          <blockquote className="relative mx-auto mt-5 max-w-3xl">
-            <p className="font-display text-xl italic leading-relaxed text-bone text-shadow-soft sm:text-2xl lg:text-[1.7rem] lg:leading-relaxed">
-              {texto}
-            </p>
-          </blockquote>
-
-          <figcaption className="relative mt-7 flex items-center justify-center gap-3">
-            <span aria-hidden className="h-px w-8 bg-brass/50" />
-            <cite className="eyebrow-light not-italic text-brass-2">
-              {referencia}
-            </cite>
-            <span aria-hidden className="h-px w-8 bg-brass/50" />
-          </figcaption>
+        <figure className="rounded-sm border border-brass/20 bg-ink/70 px-6 py-8 text-center backdrop-blur-md sm:px-10 sm:py-9">
+          {conteudo}
         </figure>
       </div>
     </section>
