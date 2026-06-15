@@ -16,6 +16,7 @@ import {
   TIPOS_IMOVEL,
   FINALIDADES,
   ORDENACOES,
+  CONDOMINIOS,
 } from "@/lib/constants";
 import type {
   FiltrosImovel,
@@ -96,6 +97,11 @@ export default async function ImoveisPage({
 
   const { itens, total, totalPaginas } = resultado;
 
+  // Filtro de condomínio: lista pré-setada + os já cadastrados (sem repetir).
+  const condominiosFiltro = Array.from(
+    new Set([...condominios, ...CONDOMINIOS]),
+  ).sort((a, b) => a.localeCompare(b, "pt-BR"));
+
   // Valores enviados à barra de filtros (somente o que está aplicado na URL)
   const valores: ValoresFiltro = {
     cidade,
@@ -149,7 +155,7 @@ export default async function ImoveisPage({
       {/* Barra de filtros */}
       <FilterBar
         cidades={cidades}
-        condominios={condominios}
+        condominios={condominiosFiltro}
         tipos={TIPOS_IMOVEL}
         finalidades={FINALIDADES}
         ordenacoes={ORDENACOES}
