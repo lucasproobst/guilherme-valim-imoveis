@@ -1,7 +1,7 @@
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Hero } from "@/components/site/Hero";
-import { AuthorityStrip } from "@/components/site/AuthorityStrip";
+import { VersiculoDoDia } from "@/components/site/VersiculoDoDia";
 import { AboutPreview } from "@/components/site/AboutPreview";
 import { CtaBand } from "@/components/site/CtaBand";
 import { SectionHeading } from "@/components/site/SectionHeading";
@@ -23,7 +23,7 @@ export default async function HomePage() {
 
       <main>
         <Hero />
-        <AuthorityStrip />
+        <VersiculoDoDia />
 
         {/* Seleção da semana */}
         <section className="bg-bone py-24 md:py-32">
