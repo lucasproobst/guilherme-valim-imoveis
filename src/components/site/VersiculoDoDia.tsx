@@ -16,8 +16,8 @@ export function VersiculoDoDia({
   const conteudo = (
     <>
       <span className="eyebrow-light">Palavra do dia</span>
-      <blockquote className="mx-auto mt-3 max-w-2xl">
-        <p className="font-display text-base italic leading-relaxed text-bone text-shadow-soft sm:text-lg">
+      <blockquote className="mx-auto mt-3 max-w-3xl">
+        <p className="font-display text-xl italic leading-relaxed text-bone text-shadow-soft sm:text-2xl">
           {texto}
         </p>
       </blockquote>
@@ -34,7 +34,7 @@ export function VersiculoDoDia({
   if (variant === "sobre") {
     return (
       <section
-        className="dark-section bg-ink py-14 md:py-16"
+        className="dark-section bg-ink py-10 md:py-12"
         aria-label="Palavra do dia"
       >
         <div className="reveal shell text-center">{conteudo}</div>
@@ -48,7 +48,7 @@ export function VersiculoDoDia({
       aria-label="Palavra do dia"
     >
       <div className="reveal shell">
-        <figure className="rounded-sm border border-brass/20 bg-ink/70 px-6 py-8 text-center backdrop-blur-md sm:px-10 sm:py-9">
+        <figure className="rounded-sm border border-brass/20 bg-ink/70 px-6 py-6 text-center backdrop-blur-md sm:px-10 sm:py-7">
           {conteudo}
         </figure>
       </div>
