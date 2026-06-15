@@ -152,7 +152,11 @@ export async function getHeroBanners(): Promise<string[]> {
       where: { id: CONFIG_SINGLETON_ID },
       select: { heroImagens: true },
     });
-    return parseUrls(row?.heroImagens, []);
+    // Ignora os placeholders padrão da marca (/brand/...): não são banners que o
+    // corretor adicionou de fato, então o hero deve cair para as fotos dos imóveis.
+    return parseUrls(row?.heroImagens, []).filter(
+      (u) => !u.startsWith("/brand/"),
+    );
   } catch {
     return [];
   }
