@@ -24,6 +24,7 @@ model Imovel {
   cidade        String
   bairro        String?
   endereco      String?
+  complementoPrivado String? // nº do apto / quadra e lote — PRIVADO, só o painel vê
   lat           Float?
   lng           Float?
   suites        Int      @default(0)

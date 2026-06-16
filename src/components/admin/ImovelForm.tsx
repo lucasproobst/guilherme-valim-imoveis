@@ -139,6 +139,9 @@ export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
   const [numero, setNumero] = useState(
     () => separarEndereco(imovel?.endereco ?? "").numero,
   );
+  const [complementoPrivado, setComplementoPrivado] = useState(
+    imovel?.complementoPrivado ?? "",
+  );
   const [condominioNome, setCondominioNome] = useState(
     imovel?.condominioNome ?? "",
   );
@@ -184,6 +187,7 @@ export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
       cidade: cidade.trim(),
       bairro: bairro.trim(),
       endereco: juntarEndereco(endereco, numero),
+      complementoPrivado: complementoPrivado.trim(),
       condominioNome: condominioNome.trim(),
       lat: null,
       lng: null,
@@ -397,6 +401,21 @@ export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
                   value={numero}
                   onChange={(e) => setNumero(e.target.value)}
                   placeholder="1200"
+                />
+              </Field>
+            </div>
+
+            <div className="rounded-sm border border-brass/40 bg-brass/5 p-4">
+              <Field
+                label="🔒 Complemento privado"
+                htmlFor="complementoPrivado"
+                hint="Só você vê. Nunca aparece no site — nº do apartamento, ou quadra e lote."
+              >
+                <Input
+                  id="complementoPrivado"
+                  value={complementoPrivado}
+                  onChange={(e) => setComplementoPrivado(e.target.value)}
+                  placeholder="Ex.: Apto 502 · ou Quadra 12, Lote 8"
                 />
               </Field>
             </div>

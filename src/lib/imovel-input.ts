@@ -15,6 +15,7 @@ export type ImovelInput = {
   cidade: string;
   bairro: string;
   endereco: string;
+  complementoPrivado: string;
   lat: number | null;
   lng: number | null;
   suites: number;
@@ -75,6 +76,7 @@ export function parseImovelInput(body: unknown): ImovelInput {
     cidade,
     bairro: str(d.bairro),
     endereco: str(d.endereco),
+    complementoPrivado: str(d.complementoPrivado),
     lat: numOuNulo(d.lat),
     lng: numOuNulo(d.lng),
     suites: num(d.suites),

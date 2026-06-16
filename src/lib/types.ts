@@ -23,6 +23,7 @@ export type ImovelDTO = {
   cidade: string;
   bairro: string | null;
   endereco: string | null;
+  complementoPrivado: string | null; // PRIVADO — só preenchido nas consultas do painel
   lat: number | null;
   lng: number | null;
   suites: number;

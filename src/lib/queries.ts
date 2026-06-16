@@ -51,6 +51,7 @@ function toImovelDTO(i: ImovelComFotos): ImovelDTO {
     cidade: i.cidade,
     bairro: i.bairro,
     endereco: i.endereco,
+    complementoPrivado: i.complementoPrivado,
     lat: i.lat,
     lng: i.lng,
     suites: i.suites,
@@ -208,7 +209,9 @@ export async function getImovelBySlug(slug: string): Promise<ImovelDTO | null> {
     where: { slug, publicado: true },
     ...imovelComFotos,
   });
-  return i ? toImovelDTO(i) : null;
+  if (!i) return null;
+  // O complemento é PRIVADO: nunca sai para o site público (só no painel).
+  return { ...toImovelDTO(i), complementoPrivado: null };
 }
 
 /** Imóveis semelhantes (mesma cidade ou tipo), exceto o atual. */

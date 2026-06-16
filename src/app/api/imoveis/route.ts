@@ -47,6 +47,7 @@ export async function POST(req: Request) {
       cidade: dados.cidade,
       bairro: dados.bairro || null,
       endereco: dados.endereco || null,
+      complementoPrivado: dados.complementoPrivado || null,
       lat: dados.lat,
       lng: dados.lng,
       suites: dados.suites,
