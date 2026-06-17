@@ -22,6 +22,12 @@ export function SpecsBar({ imovel }: { imovel: ImovelDTO }) {
       valor: imovel.suites,
       label: "Suítes",
     },
+    imovel.quartos > 0 && {
+      key: "quartos",
+      icon: <IconBed className="h-5 w-5" />,
+      valor: imovel.quartos,
+      label: "Quartos",
+    },
     imovel.banheiros != null &&
       imovel.banheiros > 0 && {
         key: "banheiros",

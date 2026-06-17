@@ -27,6 +27,7 @@ export type ImovelDTO = {
   lat: number | null;
   lng: number | null;
   suites: number;
+  quartos: number;
   banheiros: number | null;
   areaPrivativa: number | null;
   areaTerreno: number | null;
@@ -54,6 +55,7 @@ export type ImovelCardDTO = Pick<
   | "bairro"
   | "condominioNome"
   | "suites"
+  | "quartos"
   | "banheiros"
   | "areaPrivativa"
   | "vagas"

@@ -109,6 +109,13 @@ export function PropertyCard({
                   label="Suítes"
                 />
               )}
+              {imovel.quartos > 0 && (
+                <SpecItem
+                  icon={<IconBed className="h-[18px] w-[18px]" />}
+                  valor={imovel.quartos}
+                  label="Quartos"
+                />
+              )}
               {imovel.areaPrivativa != null && (
                 <SpecItem
                   icon={<IconRuler className="h-[18px] w-[18px]" />}

@@ -147,6 +147,7 @@ export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
   );
 
   const [suites, setSuites] = useState<number>(imovel?.suites ?? 0);
+  const [quartos, setQuartos] = useState<number>(imovel?.quartos ?? 0);
   const [banheiros, setBanheiros] = useState<number | null>(
     imovel?.banheiros ?? null,
   );
@@ -192,6 +193,7 @@ export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
       lat: null,
       lng: null,
       suites,
+      quartos,
       banheiros,
       areaPrivativa,
       areaTerreno,
@@ -459,6 +461,16 @@ export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
                 onChange={(e) => setSuites(paraNumero(e.target.value) ?? 0)}
               />
             </Field>
+            <Field label="Quartos" htmlFor="quartos">
+              <Input
+                id="quartos"
+                type="number"
+                min={0}
+                inputMode="numeric"
+                value={quartos}
+                onChange={(e) => setQuartos(paraNumero(e.target.value) ?? 0)}
+              />
+            </Field>
             <Field label="Banheiros" htmlFor="banheiros">
               <Input
                 id="banheiros"
@@ -597,6 +609,7 @@ export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
           cidade={cidade}
           bairro={bairro}
           suites={suites}
+          quartos={quartos}
           banheiros={banheiros}
           areaPrivativa={areaPrivativa}
           vagas={vagas}

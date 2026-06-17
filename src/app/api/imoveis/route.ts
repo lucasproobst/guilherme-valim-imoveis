@@ -51,6 +51,7 @@ export async function POST(req: Request) {
       lat: dados.lat,
       lng: dados.lng,
       suites: dados.suites,
+      quartos: dados.quartos,
       banheiros: dados.banheiros,
       areaPrivativa: dados.areaPrivativa,
       areaTerreno: dados.areaTerreno,

@@ -17,6 +17,7 @@ export function LivePreview({
   cidade,
   bairro,
   suites,
+  quartos,
   banheiros,
   areaPrivativa,
   vagas,
@@ -30,6 +31,7 @@ export function LivePreview({
   cidade: string;
   bairro: string;
   suites: number;
+  quartos: number;
   banheiros: number | null;
   areaPrivativa: number | null;
   vagas: number;
@@ -47,6 +49,7 @@ export function LivePreview({
     bairro: bairro.trim() || null,
     condominioNome: null,
     suites,
+    quartos,
     banheiros,
     areaPrivativa,
     vagas,

@@ -19,6 +19,7 @@ export type ImovelInput = {
   lat: number | null;
   lng: number | null;
   suites: number;
+  quartos: number;
   banheiros: number | null;
   areaPrivativa: number | null;
   areaTerreno: number | null;
@@ -80,6 +81,7 @@ export function parseImovelInput(body: unknown): ImovelInput {
     lat: numOuNulo(d.lat),
     lng: numOuNulo(d.lng),
     suites: num(d.suites),
+    quartos: num(d.quartos),
     banheiros: numOuNulo(d.banheiros),
     areaPrivativa: numOuNulo(d.areaPrivativa),
     areaTerreno: numOuNulo(d.areaTerreno),

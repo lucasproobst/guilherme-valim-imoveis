@@ -28,6 +28,7 @@ model Imovel {
   lat           Float?
   lng           Float?
   suites        Int      @default(0)
+  quartos       Int      @default(0) // quartos comuns, além das suítes
   banheiros     Int?
   areaPrivativa Int? // m² privativos
   areaTerreno   Int? // m² de terreno
