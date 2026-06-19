@@ -25,6 +25,8 @@ export function Gallery({
 }) {
   // índice da foto aberta no lightbox; null = fechado
   const [aberto, setAberto] = useState<number | null>(null);
+  // a foto ampliada atual ainda está carregando? (mostra spinner, evita "tela vazia")
+  const [carregandoFoto, setCarregandoFoto] = useState(false);
 
   const total = fotos.length;
 
@@ -37,6 +39,11 @@ export function Gallery({
     () => setAberto((i) => (i === null ? i : (i - 1 + total) % total)),
     [total],
   );
+
+  // Ao abrir ou trocar de foto, volta ao estado "carregando" até a nova carregar.
+  useEffect(() => {
+    if (aberto !== null) setCarregandoFoto(true);
+  }, [aberto]);
 
   // Navegação por teclado e trava de scroll enquanto o lightbox está aberto
   useEffect(() => {
@@ -170,13 +177,26 @@ export function Gallery({
             className="relative mx-14 h-[72vh] w-[88vw] max-w-5xl sm:mx-20"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Spinner enquanto a foto não terminou de carregar (evita parecer bug) */}
+            {carregandoFoto && (
+              <span
+                className="absolute inset-0 z-[5] flex items-center justify-center"
+                aria-hidden
+              >
+                <span className="h-10 w-10 animate-spin rounded-full border-2 border-bone/25 border-t-brass" />
+              </span>
+            )}
             <Image
+              key={aberto}
               src={fotos[aberto].url}
               alt={`${titulo} — foto ${aberto + 1} de ${total}`}
               fill
               sizes="88vw"
-              className="object-contain"
+              className={`object-contain transition-opacity duration-300 ${
+                carregandoFoto ? "opacity-0" : "opacity-100"
+              }`}
               priority
+              onLoad={() => setCarregandoFoto(false)}
             />
           </div>
 

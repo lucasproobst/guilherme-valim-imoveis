@@ -6,6 +6,9 @@ import { VideoFrame } from "@/components/ui/VideoFrame";
 import { IconUpload, IconTrash } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 
+const TIPOS_OK = ["video/mp4", "video/webm", "video/quicktime"];
+const TAMANHO_MAX = 150 * 1024 * 1024; // 150 MB — igual ao limite do servidor
+
 /**
  * Upload de UM vídeo de tour do imóvel. Drag & drop ou seleção.
  * Mostra o vídeo já na moldura final (VideoFrame) com opção de remover.
@@ -25,8 +28,53 @@ export function VideoUploader({
 
   async function enviar(file: File) {
     setErro(null);
+
+    // Validação amigável antes de subir (espelha o limite do servidor).
+    if (!TIPOS_OK.includes(file.type)) {
+      setErro("Formato de vídeo inválido. Use MP4, WEBM ou MOV.");
+      return;
+    }
+    if (file.size > TAMANHO_MAX) {
+      setErro("Vídeo muito grande (máx. 150 MB).");
+      return;
+    }
+
     setEnviando(true);
     try {
+      // 1) Pede uma URL assinada — o arquivo grande NÃO passa pela função
+      //    (Vercel limita o corpo a ~4.5 MB). Em produção: upload direto ao Storage.
+      const signRes = await fetch("/api/upload/video/sign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contentType: file.type, size: file.size }),
+      });
+      const sign = (await signRes.json().catch(() => ({}))) as {
+        mode?: "direct" | "proxy";
+        uploadUrl?: string;
+        publicUrl?: string;
+        erro?: string;
+      };
+      if (!signRes.ok) {
+        throw new Error(sign.erro || "Falha ao preparar o envio do vídeo.");
+      }
+
+      if (sign.mode === "direct" && sign.uploadUrl && sign.publicUrl) {
+        // 2) Envia o arquivo DIRETO ao Supabase Storage (sem limite da função).
+        const putRes = await fetch(sign.uploadUrl, {
+          method: "PUT",
+          headers: { "Content-Type": file.type },
+          body: file,
+        });
+        if (!putRes.ok) {
+          throw new Error(
+            "Falha ao enviar o vídeo para o armazenamento. Verifique o limite de tamanho do bucket no Supabase.",
+          );
+        }
+        onChange(sign.publicUrl);
+        return;
+      }
+
+      // Fallback (dev local, sem Storage): upload multipart tradicional.
       const fd = new FormData();
       fd.append("file", file);
       const res = await fetch("/api/upload/video", { method: "POST", body: fd });
@@ -115,7 +163,7 @@ export function VideoUploader({
           {enviando ? "Enviando vídeo…" : "Arraste o vídeo para cá"}
         </span>
         <span className="text-xs text-stone">
-          MP4, WEBM ou MOV · até 80 MB · clique para selecionar
+          MP4, WEBM ou MOV · até 150 MB · clique para selecionar
         </span>
       </button>
       <input

@@ -8,6 +8,8 @@ import {
   removerDoStorage,
 } from "@/lib/storage";
 
+export { assinarUploadStorage } from "@/lib/storage";
+
 /**
  * Camada de upload ISOLADA. Duas estratégias, escolhidas pelo ambiente:
  *  - **Supabase Storage** quando há SUPABASE_SERVICE_ROLE_KEY (obrigatório em
@@ -28,8 +30,22 @@ const EXTENSOES_OK = new Set([
 ]);
 const TAMANHO_MAX = 8 * 1024 * 1024; // 8 MB por imagem
 
-const VIDEOS_OK = new Set(["video/mp4", "video/webm", "video/quicktime"]);
-const TAMANHO_MAX_VIDEO = 80 * 1024 * 1024; // 80 MB por vídeo
+export const VIDEOS_OK = new Set([
+  "video/mp4",
+  "video/webm",
+  "video/quicktime",
+]);
+export const TAMANHO_MAX_VIDEO = 150 * 1024 * 1024; // 150 MB por vídeo
+
+/** Valida tipo e tamanho do vídeo. Lança Error com mensagem amigável. */
+export function validarVideo(contentType: string, size: number): void {
+  if (!VIDEOS_OK.has(contentType)) {
+    throw new Error("Formato de vídeo inválido. Use MP4, WEBM ou MOV.");
+  }
+  if (size > TAMANHO_MAX_VIDEO) {
+    throw new Error("Vídeo muito grande (máx. 150 MB).");
+  }
+}
 
 function extensaoDoTipo(tipo: string): string {
   switch (tipo) {
@@ -76,12 +92,7 @@ export async function salvarUpload(file: File): Promise<string> {
 
 /** Salva um vídeo (multipart) e devolve a URL pública. */
 export async function salvarVideo(file: File): Promise<string> {
-  if (!VIDEOS_OK.has(file.type)) {
-    throw new Error("Formato de vídeo inválido. Use MP4, WEBM ou MOV.");
-  }
-  if (file.size > TAMANHO_MAX_VIDEO) {
-    throw new Error("Vídeo muito grande (máx. 80 MB).");
-  }
+  validarVideo(file.type, file.size);
   const buffer = Buffer.from(await file.arrayBuffer());
   return storageHabilitado()
     ? subirParaStorage(buffer, file.type, "videos")

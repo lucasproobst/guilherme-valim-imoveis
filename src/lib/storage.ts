@@ -72,6 +72,57 @@ export async function subirParaStorage(
   return `${url}/storage/v1/object/public/${SUPABASE_BUCKET}/${objeto}`;
 }
 
+/**
+ * Cria uma URL ASSINADA para upload DIRETO do navegador ao Storage.
+ * Necessário para arquivos grandes (vídeos): em serverless (Vercel) o corpo
+ * de uma requisição é limitado a ~4.5 MB, então o arquivo não pode passar
+ * pela API — o navegador envia direto ao Supabase com esta URL.
+ * Devolve a URL de PUT (assinada) e a URL pública final do objeto.
+ */
+export async function assinarUploadStorage(
+  contentType: string,
+  pasta: string,
+): Promise<{ uploadUrl: string; publicUrl: string }> {
+  const { url, key } = env();
+  if (!url || !key) {
+    throw new Error(
+      "Supabase Storage não configurado (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY).",
+    );
+  }
+  const ext = EXT[contentType] || "bin";
+  const objeto = `${pasta}/${crypto.randomUUID()}.${ext}`;
+
+  const res = await fetch(
+    `${url}/storage/v1/object/upload/sign/${SUPABASE_BUCKET}/${objeto}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+      },
+      body: "{}",
+    },
+  );
+
+  if (!res.ok) {
+    const detalhe = await res.text().catch(() => "");
+    throw new Error(
+      `Falha ao assinar o upload (${res.status}): ${detalhe.slice(0, 140)}`,
+    );
+  }
+
+  const dados = (await res.json().catch(() => ({}))) as { url?: string };
+  if (!dados.url) {
+    throw new Error("Storage não retornou a URL assinada.");
+  }
+
+  return {
+    // dados.url já vem como "/object/upload/sign/<bucket>/<objeto>?token=..."
+    uploadUrl: `${url}/storage/v1${dados.url}`,
+    publicUrl: `${url}/storage/v1/object/public/${SUPABASE_BUCKET}/${objeto}`,
+  };
+}
+
 /** Remove um arquivo do Storage a partir da sua URL pública (ignora outras). */
 export async function removerDoStorage(urlPublica: string): Promise<void> {
   const { url, key } = env();

@@ -36,11 +36,6 @@ export default function LoginPage({
 
           <LoginForm next={next} />
         </div>
-
-        {/* Dica de demonstração */}
-        <p className="mt-6 text-center text-xs text-bone/50">
-          Demonstração — corretor@guilhermevalim.com.br · painel123
-        </p>
       </div>
     </main>
   );

@@ -44,7 +44,7 @@ export function PropertyCard({
   return (
     <article
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-sm border border-line bg-white shadow-card transition-all duration-500 ease-soft hover:-translate-y-1 hover:shadow-card-hover",
+        "group relative flex h-full flex-col overflow-hidden rounded-sm border border-line bg-white shadow-card transition-all duration-500 ease-soft hover:-translate-y-1 hover:shadow-card-hover",
         className,
       )}
     >
