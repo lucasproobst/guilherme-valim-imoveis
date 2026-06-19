@@ -175,6 +175,26 @@ export const IconX = (p: IconProps) => (
   </Svg>
 );
 
+export const IconPlay = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M7 5v14l12-7z" fill="currentColor" stroke="none" />
+  </Svg>
+);
+
+export const IconVolume = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M11 5 6 9H2v6h4l5 4V5z" />
+    <path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14" />
+  </Svg>
+);
+
+export const IconVolumeOff = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M11 5 6 9H2v6h4l5 4V5z" />
+    <path d="M23 9l-6 6M17 9l6 6" />
+  </Svg>
+);
+
 export const IconUpload = (p: IconProps) => (
   <Svg {...p}>
     <path d="M12 16V4m-5 5 5-5 5 5M4 20h16" />

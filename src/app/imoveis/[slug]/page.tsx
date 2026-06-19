@@ -154,6 +154,7 @@ export default async function ImovelPage({
                   <SectionHeading eyebrow="Tour" titulo="Vídeo do imóvel" />
                   <VideoFrame
                     src={imovel.videoUrl}
+                    modoCliente
                     poster={
                       imovel.fotos.find((f) => f.capa)?.url ??
                       imovel.fotos[0]?.url
