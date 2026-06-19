@@ -178,7 +178,10 @@ export function VideoUploader({
           {enviando ? "Enviando vídeo…" : "Arraste o vídeo para cá"}
         </span>
         <span className="text-xs text-stone">
-          MP4, WEBM ou MOV · até 50 MB · clique para selecionar
+          MP4 (H.264) · até 50 MB · clique para selecionar
+        </span>
+        <span className="text-[0.7rem] text-stone/80">
+          Vídeo do iPhone (.mov) ou maior que 50 MB? Use o link do YouTube abaixo.
         </span>
       </button>
       <input
