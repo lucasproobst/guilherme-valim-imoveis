@@ -89,22 +89,22 @@ export function ImoveisTable({ imoveis }: { imoveis: ImovelDTO[] }) {
     <>
       {/* ---------- Desktop: tabela ---------- */}
       <div className="panel hidden overflow-hidden lg:block">
-        <table className="w-full border-collapse text-left">
+        <table className="w-full table-fixed border-collapse text-left">
           <thead>
             <tr className="border-b border-line bg-bone-2/50">
               <th className="label px-6 py-4 text-[0.62rem] font-medium tracking-label text-stone-d">
                 Imóvel
               </th>
-              <th className="label px-6 py-4 text-[0.62rem] font-medium tracking-label text-stone-d">
+              <th className="label w-44 px-6 py-4 text-[0.62rem] font-medium tracking-label text-stone-d">
                 Categoria
               </th>
-              <th className="label px-6 py-4 text-[0.62rem] font-medium tracking-label text-stone-d">
+              <th className="label w-44 px-6 py-4 text-[0.62rem] font-medium tracking-label text-stone-d">
                 Valor
               </th>
-              <th className="label px-6 py-4 text-[0.62rem] font-medium tracking-label text-stone-d">
+              <th className="label w-36 px-6 py-4 text-[0.62rem] font-medium tracking-label text-stone-d">
                 Situação
               </th>
-              <th className="label px-6 py-4 text-right text-[0.62rem] font-medium tracking-label text-stone-d">
+              <th className="label w-36 px-6 py-4 text-right text-[0.62rem] font-medium tracking-label text-stone-d">
                 Ações
               </th>
             </tr>
@@ -177,6 +177,7 @@ export function ImoveisTable({ imoveis }: { imoveis: ImovelDTO[] }) {
                       <Link
                         href={`/painel/imoveis/editar/${imovel.id}`}
                         aria-label={`Editar ${imovel.titulo}`}
+                        title="Editar"
                         className="inline-flex h-9 w-9 items-center justify-center rounded-sm text-stone-d transition-colors hover:bg-ink hover:text-bone"
                       >
                         <IconEdit className="h-4 w-4" />
@@ -190,6 +191,7 @@ export function ImoveisTable({ imoveis }: { imoveis: ImovelDTO[] }) {
                             ? `Despublicar ${imovel.titulo}`
                             : `Publicar ${imovel.titulo}`
                         }
+                        title={imovel.publicado ? "Ocultar do site" : "Publicar"}
                         className="inline-flex h-9 w-9 items-center justify-center rounded-sm text-stone-d transition-colors hover:bg-brass hover:text-ink disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {imovel.publicado ? (
@@ -203,6 +205,7 @@ export function ImoveisTable({ imoveis }: { imoveis: ImovelDTO[] }) {
                         onClick={() => excluir(imovel)}
                         disabled={ocupado}
                         aria-label={`Excluir ${imovel.titulo}`}
+                        title="Excluir"
                         className="inline-flex h-9 w-9 items-center justify-center rounded-sm text-stone-d transition-colors hover:bg-red-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         <IconTrash className="h-4 w-4" />
