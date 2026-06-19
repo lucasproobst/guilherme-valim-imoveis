@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Field";
 import { VideoFrame } from "@/components/ui/VideoFrame";
 import { IconUpload, IconTrash } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
@@ -25,6 +26,20 @@ export function VideoUploader({
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [arrastando, setArrastando] = useState(false);
+  const [link, setLink] = useState("");
+
+  /** Usa um link de vídeo (YouTube/Vimeo ou URL direta) em vez de upload. */
+  function aplicarLink() {
+    const l = link.trim();
+    if (!l) return;
+    if (!/^https?:\/\//i.test(l)) {
+      setErro("Cole um link válido, começando com https://");
+      return;
+    }
+    setErro(null);
+    onChange(l);
+    setLink("");
+  }
 
   async function enviar(file: File) {
     setErro(null);
@@ -177,6 +192,46 @@ export function VideoUploader({
           e.target.value = "";
         }}
       />
+
+      {/* Alternativa por link — sem limite de tamanho e sem problema de codec */}
+      <div className="mt-5">
+        <div className="mb-3 flex items-center gap-3">
+          <span className="h-px flex-1 bg-line" />
+          <span className="label text-[0.6rem] tracking-label text-stone">
+            ou use um link
+          </span>
+          <span className="h-px flex-1 bg-line" />
+        </div>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Input
+            type="url"
+            inputMode="url"
+            value={link}
+            onChange={(e) => setLink(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                aplicarLink();
+              }
+            }}
+            placeholder="Cole o link do YouTube ou Vimeo"
+          />
+          <Button
+            type="button"
+            variant="dark"
+            size="md"
+            onClick={aplicarLink}
+            className="shrink-0"
+          >
+            Usar link
+          </Button>
+        </div>
+        <p className="mt-2 text-xs text-stone">
+          Recomendado para vídeos grandes (acima de 50 MB): sem limite de
+          tamanho e sempre toca no navegador.
+        </p>
+      </div>
+
       {erro && <p className="mt-2 text-xs text-red-600">{erro}</p>}
     </div>
   );

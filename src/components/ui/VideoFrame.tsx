@@ -1,9 +1,11 @@
 import { cn } from "@/lib/cn";
+import { parseVideoUrl } from "@/lib/video";
 
 /**
  * Moldura moderna para o tour em vídeo do imóvel.
- * Fundo escuro, cantos com colchetes dourados e player nativo — visual de
- * "sala de projeção privada". Presentacional; reutilizado no painel e no site.
+ * Fundo escuro, cantos com colchetes dourados e player. Para YouTube/Vimeo usa
+ * iframe (sem limite de tamanho, sem problema de codec); para arquivos diretos
+ * usa o player nativo. Presentacional; reutilizado no painel e no site.
  */
 export function VideoFrame({
   src,
@@ -16,6 +18,8 @@ export function VideoFrame({
   className?: string;
   label?: string;
 }) {
+  const video = parseVideoUrl(src);
+
   return (
     <figure
       className={cn(
@@ -24,14 +28,26 @@ export function VideoFrame({
       )}
     >
       <div className="relative overflow-hidden rounded-[2px]">
-        <video
-          src={src}
-          poster={poster}
-          controls
-          playsInline
-          preload="metadata"
-          className="aspect-video w-full bg-ink object-cover"
-        />
+        {video.tipo === "arquivo" ? (
+          <video
+            src={src}
+            poster={poster}
+            controls
+            playsInline
+            preload="metadata"
+            className="aspect-video w-full bg-ink object-contain"
+          />
+        ) : (
+          <iframe
+            src={video.embedUrl}
+            title={label}
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+            allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
+            className="aspect-video w-full bg-ink"
+          />
+        )}
       </div>
 
       {/* Colchetes dourados nos cantos */}
