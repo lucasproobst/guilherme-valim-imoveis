@@ -35,7 +35,7 @@ export const VIDEOS_OK = new Set([
   "video/webm",
   "video/quicktime",
 ]);
-export const TAMANHO_MAX_VIDEO = 150 * 1024 * 1024; // 150 MB por vídeo
+export const TAMANHO_MAX_VIDEO = 50 * 1024 * 1024; // 50 MB por vídeo (limite do bucket Supabase)
 
 /** Valida tipo e tamanho do vídeo. Lança Error com mensagem amigável. */
 export function validarVideo(contentType: string, size: number): void {
@@ -43,7 +43,7 @@ export function validarVideo(contentType: string, size: number): void {
     throw new Error("Formato de vídeo inválido. Use MP4, WEBM ou MOV.");
   }
   if (size > TAMANHO_MAX_VIDEO) {
-    throw new Error("Vídeo muito grande (máx. 150 MB).");
+    throw new Error("Vídeo muito grande (máx. 50 MB).");
   }
 }
 

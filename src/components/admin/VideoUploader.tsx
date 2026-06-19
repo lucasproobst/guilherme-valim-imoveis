@@ -7,7 +7,7 @@ import { IconUpload, IconTrash } from "@/components/ui/icons";
 import { cn } from "@/lib/cn";
 
 const TIPOS_OK = ["video/mp4", "video/webm", "video/quicktime"];
-const TAMANHO_MAX = 150 * 1024 * 1024; // 150 MB — igual ao limite do servidor
+const TAMANHO_MAX = 50 * 1024 * 1024; // 50 MB — igual ao limite do servidor/bucket
 
 /**
  * Upload de UM vídeo de tour do imóvel. Drag & drop ou seleção.
@@ -35,7 +35,7 @@ export function VideoUploader({
       return;
     }
     if (file.size > TAMANHO_MAX) {
-      setErro("Vídeo muito grande (máx. 150 MB).");
+      setErro("Vídeo muito grande (máx. 50 MB).");
       return;
     }
 
@@ -163,7 +163,7 @@ export function VideoUploader({
           {enviando ? "Enviando vídeo…" : "Arraste o vídeo para cá"}
         </span>
         <span className="text-xs text-stone">
-          MP4, WEBM ou MOV · até 150 MB · clique para selecionar
+          MP4, WEBM ou MOV · até 50 MB · clique para selecionar
         </span>
       </button>
       <input
