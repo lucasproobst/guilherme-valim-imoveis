@@ -1,17 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/cn";
 import { parseVideoUrl, type VideoEmbed } from "@/lib/video";
-import { IconX, IconPlay, IconVolume, IconVolumeOff } from "@/components/ui/icons";
+import { IconPlay, IconVolume, IconVolumeOff } from "@/components/ui/icons";
 
 /**
  * Tour em vídeo do imóvel.
  *
- * - `modoCliente` (site público): mostra uma miniatura clicável; ao clicar,
- *   abre um lightbox responsivo que cresce conforme o dispositivo. Sem barra de
- *   progresso (o visitante não consegue adiantar o vídeo).
+ * - `modoCliente` (site público): mostra uma miniatura clicável; ao clicar, o
+ *   vídeo passa a tocar NO LUGAR (inline) — a página continua rolando normal,
+ *   sem travar o scroll. Sem barra de progresso (o visitante não adianta).
  * - padrão (preview do painel): player completo com controles, para o corretor
  *   conferir o vídeo.
  */
@@ -109,14 +109,14 @@ function embedSemControles(video: VideoEmbed): string {
   if (video.tipo === "arquivo") return "";
   const sep = video.embedUrl.includes("?") ? "&" : "?";
   if (video.tipo === "youtube") {
-    return `${video.embedUrl}${sep}autoplay=1&controls=0&disablekb=1&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&fs=1`;
+    return `${video.embedUrl}${sep}autoplay=1&controls=0&disablekb=1&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3`;
   }
   // vimeo
   return `${video.embedUrl}${sep}autoplay=1&controls=0&keyboard=0&title=0&byline=0&portrait=0&playsinline=1`;
 }
 
 /* ------------------------------------------------------------------ *
- *  Site público — miniatura clicável + lightbox sem barra de progresso
+ *  Site público — miniatura clicável que toca INLINE (sem travar scroll)
  * ------------------------------------------------------------------ */
 function TourCliente({
   src,
@@ -131,55 +131,25 @@ function TourCliente({
   label?: string;
   video: VideoEmbed;
 }) {
-  const [aberto, setAberto] = useState(false);
+  const [iniciado, setIniciado] = useState(false);
   const [mudo, setMudo] = useState(false);
   const [tocando, setTocando] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const fechar = useCallback(() => setAberto(false), []);
-
-  // Esc fecha + trava o scroll do fundo enquanto aberto.
-  useEffect(() => {
-    if (!aberto) return;
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") fechar();
-    }
-    document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [aberto, fechar]);
-
-  // Dá play no arquivo ao abrir (o clique já é o gesto do usuário).
-  useEffect(() => {
-    if (aberto && video.tipo === "arquivo") {
-      const v = videoRef.current;
-      if (v) v.play().then(() => setTocando(true)).catch(() => setTocando(false));
-    }
-  }, [aberto, video.tipo]);
-
   function alternarPlay() {
     const v = videoRef.current;
     if (!v) return;
-    if (v.paused) {
-      v.play();
-      setTocando(true);
-    } else {
-      v.pause();
-      setTocando(false);
-    }
+    if (v.paused) v.play();
+    else v.pause();
   }
 
-  return (
-    <>
-      {/* Miniatura clicável */}
+  // Antes de iniciar: miniatura com botão de play.
+  if (!iniciado) {
+    return (
       <Moldura className={className} label={label}>
         <button
           type="button"
-          onClick={() => setAberto(true)}
+          onClick={() => setIniciado(true)}
           aria-label="Assistir ao tour em vídeo"
           className="relative block aspect-video w-full bg-ink"
         >
@@ -197,93 +167,69 @@ function TourCliente({
             </span>
           )}
           <span className="absolute inset-0 bg-ink/30 transition-colors group-hover:bg-ink/20" />
-          {/* Botão de play */}
           <span className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-bone/30 bg-ink/55 text-bone backdrop-blur-sm transition-all duration-300 group-hover:scale-105 group-hover:border-brass group-hover:text-brass sm:h-20 sm:w-20">
             <IconPlay className="ml-1 h-7 w-7 sm:h-8 sm:w-8" />
           </span>
         </button>
       </Moldura>
+    );
+  }
 
-      {/* Lightbox — cresce conforme o dispositivo */}
-      {aberto && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={label}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/95 p-4 backdrop-blur-sm animate-fade-in motion-reduce:animate-none"
-          onClick={fechar}
-        >
-          {/* Fechar */}
+  // Tocando inline — a página rola normalmente (sem overlay/scroll lock).
+  return (
+    <Moldura className={className} label={label}>
+      {video.tipo === "arquivo" ? (
+        <div className="relative">
+          <video
+            ref={videoRef}
+            src={src}
+            autoPlay
+            playsInline
+            onClick={alternarPlay}
+            onPlay={() => setTocando(true)}
+            onPause={() => setTocando(false)}
+            onContextMenu={(e) => e.preventDefault()}
+            controlsList="nodownload noplaybackrate"
+            className="aspect-video w-full bg-ink object-contain"
+          />
+          {!tocando && (
+            <button
+              type="button"
+              onClick={alternarPlay}
+              aria-label="Reproduzir"
+              className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-bone/30 bg-ink/55 text-bone backdrop-blur-sm transition-colors hover:border-brass hover:text-brass"
+            >
+              <IconPlay className="ml-1 h-7 w-7" />
+            </button>
+          )}
           <button
             type="button"
-            onClick={fechar}
-            aria-label="Fechar vídeo"
-            className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-bone/20 text-bone transition-colors hover:border-brass hover:text-brass sm:right-6 sm:top-6"
+            onClick={() => {
+              const v = videoRef.current;
+              if (!v) return;
+              v.muted = !v.muted;
+              setMudo(v.muted);
+            }}
+            aria-label={mudo ? "Ativar som" : "Silenciar"}
+            className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full border border-bone/20 bg-ink/55 text-bone backdrop-blur-sm transition-colors hover:border-brass hover:text-brass"
           >
-            <IconX className="h-5 w-5" />
-          </button>
-
-          <div
-            className="relative w-full max-w-6xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {video.tipo === "arquivo" ? (
-              <div className="relative">
-                <video
-                  ref={videoRef}
-                  src={src}
-                  autoPlay
-                  playsInline
-                  onClick={alternarPlay}
-                  onContextMenu={(e) => e.preventDefault()}
-                  controlsList="nodownload noplaybackrate"
-                  className="max-h-[85vh] w-full bg-ink object-contain"
-                />
-                {/* Play central quando pausado */}
-                {!tocando && (
-                  <button
-                    type="button"
-                    onClick={alternarPlay}
-                    aria-label="Reproduzir"
-                    className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-bone/30 bg-ink/55 text-bone backdrop-blur-sm transition-colors hover:border-brass hover:text-brass"
-                  >
-                    <IconPlay className="ml-1 h-7 w-7" />
-                  </button>
-                )}
-                {/* Mudo/Som (única forma de controle de áudio — sem barra de progresso) */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    const v = videoRef.current;
-                    if (!v) return;
-                    v.muted = !v.muted;
-                    setMudo(v.muted);
-                  }}
-                  aria-label={mudo ? "Ativar som" : "Silenciar"}
-                  className="absolute bottom-4 right-4 flex h-10 w-10 items-center justify-center rounded-full border border-bone/20 bg-ink/55 text-bone backdrop-blur-sm transition-colors hover:border-brass hover:text-brass"
-                >
-                  {mudo ? (
-                    <IconVolumeOff className="h-5 w-5" />
-                  ) : (
-                    <IconVolume className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
+            {mudo ? (
+              <IconVolumeOff className="h-5 w-5" />
             ) : (
-              <div className="aspect-video w-full overflow-hidden rounded-sm bg-ink">
-                <iframe
-                  src={embedSemControles(video)}
-                  title={label}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                  allowFullScreen
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  className="h-full w-full"
-                />
-              </div>
+              <IconVolume className="h-5 w-5" />
             )}
-          </div>
+          </button>
         </div>
+      ) : (
+        <iframe
+          src={embedSemControles(video)}
+          title={label}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+          allowFullScreen
+          referrerPolicy="strict-origin-when-cross-origin"
+          className="aspect-video w-full bg-ink"
+        />
       )}
-    </>
+    </Moldura>
   );
 }
