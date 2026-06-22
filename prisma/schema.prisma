@@ -66,6 +66,16 @@ model Lead {
   criadoEm DateTime @default(now())
 }
 
+// Condomínios/empreendimentos gerenciáveis pelo painel (CRUD).
+// Alimentam a lista sugerida no cadastro de imóvel e o filtro do site.
+model Condominio {
+  id           String   @id @default(cuid())
+  nome         String   @unique
+  cidade       String?
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+}
+
 // Configurações do site (linha única "singleton"), editáveis pelo painel.
 // Campos nulos caem para os defaults em src/lib/constants.ts (CORRETOR).
 model Config {

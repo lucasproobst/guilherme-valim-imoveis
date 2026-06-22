@@ -118,9 +118,19 @@ function Toggle({
   );
 }
 
-export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
+export function ImovelForm({
+  imovel,
+  condominios,
+}: {
+  imovel?: ImovelDTO;
+  condominios?: string[];
+}) {
   const router = useRouter();
   const editando = Boolean(imovel);
+
+  // Lista de sugestões: a gerenciada no painel ou, na ausência, a lista fixa.
+  const listaCondominios =
+    condominios && condominios.length > 0 ? condominios : [...CONDOMINIOS];
 
   /* ---- estado controlado (inicializa do imóvel ou usa defaults) ---- */
   const [titulo, setTitulo] = useState(imovel?.titulo ?? "");
@@ -435,7 +445,7 @@ export function ImovelForm({ imovel }: { imovel?: ImovelDTO }) {
                 placeholder="Ex.: Velas da Marina"
               />
               <datalist id="lista-condominios">
-                {CONDOMINIOS.map((c) => (
+                {listaCondominios.map((c) => (
                   <option key={c} value={c} />
                 ))}
               </datalist>

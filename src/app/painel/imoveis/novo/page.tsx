@@ -5,6 +5,7 @@
 
 import Link from "next/link";
 import { exigirAdmin } from "@/lib/auth";
+import { getNomesCondominios } from "@/lib/queries";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Rule } from "@/components/ui/Rule";
 import { IconChevronLeft } from "@/components/ui/icons";
@@ -18,6 +19,7 @@ export const metadata = {
 
 export default async function NovoImovelPage() {
   await exigirAdmin();
+  const condominios = await getNomesCondominios();
 
   return (
     <div className="space-y-10">
@@ -49,7 +51,7 @@ export default async function NovoImovelPage() {
         </p>
       </header>
 
-      <ImovelForm />
+      <ImovelForm condominios={condominios} />
     </div>
   );
 }

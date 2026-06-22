@@ -65,6 +65,13 @@ export type ImovelCardDTO = Pick<
   lote: number; // "Lote NN" exibido sobre a foto
 };
 
+export type CondominioDTO = {
+  id: string;
+  nome: string;
+  cidade: string | null;
+  criadoEm: string;
+};
+
 export type LeadDTO = {
   id: string;
   nome: string;

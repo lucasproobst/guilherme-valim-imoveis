@@ -63,6 +63,7 @@ export const CONDOMINIOS = [
   "Velas da Marina",
   "Sense",
   "Capão Ilhas Resort",
+  "Condado de Capão",
   "Ilhas Park",
   "Quintas do Lago",
   "Ventura",

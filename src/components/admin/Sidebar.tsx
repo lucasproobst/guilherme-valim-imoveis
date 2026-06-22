@@ -11,6 +11,7 @@ import { Logo } from "@/components/ui/Logo";
 import {
   IconGrid,
   IconHome,
+  IconBuilding,
   IconUsers,
   IconCalendar,
   IconUser,
@@ -44,6 +45,7 @@ const GRUPOS: Grupo[] = [
     itens: [
       { href: "/painel", label: "Visão geral", icon: IconGrid },
       { href: "/painel/imoveis", label: "Imóveis", icon: IconHome },
+      { href: "/painel/condominios", label: "Condomínios", icon: IconBuilding },
       { href: "/painel/leads", label: "Leads & contatos", icon: IconUsers },
       { href: "/painel/agenda", label: "Agenda de visitas", icon: IconCalendar },
     ],

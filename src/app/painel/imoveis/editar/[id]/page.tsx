@@ -6,7 +6,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { exigirAdmin } from "@/lib/auth";
-import { getImovelById } from "@/lib/queries";
+import { getImovelById, getNomesCondominios } from "@/lib/queries";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Rule } from "@/components/ui/Rule";
 import { IconChevronLeft } from "@/components/ui/icons";
@@ -25,7 +25,10 @@ export default async function EditarImovelPage({
 }) {
   await exigirAdmin();
 
-  const imovel = await getImovelById(params.id);
+  const [imovel, condominios] = await Promise.all([
+    getImovelById(params.id),
+    getNomesCondominios(),
+  ]);
   if (!imovel) notFound();
 
   return (
@@ -58,7 +61,7 @@ export default async function EditarImovelPage({
         </p>
       </header>
 
-      <ImovelForm imovel={imovel} />
+      <ImovelForm imovel={imovel} condominios={condominios} />
     </div>
   );
 }

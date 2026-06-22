@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { POR_PAGINA } from "@/lib/constants";
 import type {
+  CondominioDTO,
   FiltrosImovel,
   ImovelCardDTO,
   ImovelDTO,
@@ -256,6 +257,28 @@ export async function getCondominiosDisponiveis(): Promise<string[]> {
   return linhas
     .map((l) => l.condominioNome)
     .filter((c): c is string => Boolean(c && c.trim()));
+}
+
+/** Condomínios cadastrados (gerenciados no painel). */
+export async function listarCondominios(): Promise<CondominioDTO[]> {
+  const linhas = await prisma.condominio.findMany({
+    orderBy: { nome: "asc" },
+  });
+  return linhas.map((c) => ({
+    id: c.id,
+    nome: c.nome,
+    cidade: c.cidade,
+    criadoEm: c.criadoEm.toISOString(),
+  }));
+}
+
+/** Apenas os nomes dos condomínios cadastrados (para a lista do cadastro). */
+export async function getNomesCondominios(): Promise<string[]> {
+  const linhas = await prisma.condominio.findMany({
+    orderBy: { nome: "asc" },
+    select: { nome: true },
+  });
+  return linhas.map((c) => c.nome);
 }
 
 /** Slugs publicados para o sitemap. */

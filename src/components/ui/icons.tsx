@@ -175,6 +175,12 @@ export const IconX = (p: IconProps) => (
   </Svg>
 );
 
+export const IconBuilding = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M14 9h4a2 2 0 0 1 2 2v10M3 21h18M8 7h2M8 11h2M8 15h2" />
+  </Svg>
+);
+
 export const IconPlay = (p: IconProps) => (
   <Svg {...p}>
     <path d="M7 5v14l12-7z" fill="currentColor" stroke="none" />

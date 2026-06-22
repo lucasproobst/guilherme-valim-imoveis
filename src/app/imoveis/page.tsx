@@ -11,6 +11,7 @@ import {
   buscarImoveis,
   getCidadesDisponiveis,
   getCondominiosDisponiveis,
+  getNomesCondominios,
 } from "@/lib/queries";
 import {
   TIPOS_IMOVEL,
@@ -89,17 +90,20 @@ export default async function ImoveisPage({
   };
 
   // ----- Consultas ao banco -----
-  const [resultado, cidades, condominios] = await Promise.all([
-    buscarImoveis(filtros),
-    getCidadesDisponiveis(),
-    getCondominiosDisponiveis(),
-  ]);
+  const [resultado, cidades, condominios, condominiosGerenciados] =
+    await Promise.all([
+      buscarImoveis(filtros),
+      getCidadesDisponiveis(),
+      getCondominiosDisponiveis(),
+      getNomesCondominios(),
+    ]);
 
   const { itens, total, totalPaginas } = resultado;
 
-  // Filtro de condomínio: lista pré-setada + os já cadastrados (sem repetir).
+  // Filtro de condomínio: gerenciados no painel + os já usados em imóveis +
+  // a lista fixa como reserva (sem repetir).
   const condominiosFiltro = Array.from(
-    new Set([...condominios, ...CONDOMINIOS]),
+    new Set([...condominiosGerenciados, ...condominios, ...CONDOMINIOS]),
   ).sort((a, b) => a.localeCompare(b, "pt-BR"));
 
   // Valores enviados à barra de filtros (somente o que está aplicado na URL)
